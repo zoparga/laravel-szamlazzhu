@@ -1,6 +1,11 @@
 # laravel-szamlazzhu
 Implementation for Laravel which was made to support Szamlazz.hu Agent version of **3.4** and higher.
 
+## Installation
+```bash
+composer require szunisoft/laravel-szamlazzhu
+```
+
 ## Introduction
 This package supports the following methods:
 - Invoice creation
