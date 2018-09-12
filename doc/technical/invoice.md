@@ -65,7 +65,7 @@ If the currency is foreign (differs from HUF or Ft) you have to specify the curr
 
 ### Add customer as array
 ```php
-$invoice->addCustomer([
+$invoice->setCustomer([
     // Required
     'name' => 'John Doe',
     'zipCode' => '1234',
@@ -100,7 +100,7 @@ class ThisIsMyCustomerClass implements ArrayableCustomer {
 
 ```php
 $thisIsMyCustomer = new ThisIsMyCustomerClass();
-$invoice->addCustomer($thisIsMyCustomer);
+$invoice->setCustomer($thisIsMyCustomer);
 ```
 
 ## Setup merchant on invoice (optional)
