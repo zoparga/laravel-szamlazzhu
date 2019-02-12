@@ -8,7 +8,7 @@ return [
      * */
     'merchant' => [
         'bank_name' => env('SZAMLAZZ_HU_MERCHANT_BANK_NAME'),
-        'bank_account_number', env('SZAMLAZZ_HU_MERCHANT_BANK_ACCOUNT_NUMBER'),
+        'bank_account_number' => env('SZAMLAZZ_HU_MERCHANT_BANK_ACCOUNT_NUMBER'),
         'reply_email' => env('SZAMLAZZ_HU_MERCHANT_REPLY_EMAIL')
     ],
 
