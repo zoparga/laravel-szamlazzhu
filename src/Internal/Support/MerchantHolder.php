@@ -51,7 +51,7 @@ trait MerchantHolder
     protected function simplifyMerchant($merchant)
     {
         if (! is_array($merchant) && ! $merchant instanceof ArrayableMerchant) {
-            throw new InvalidArgumentException("Specified customer must be an array or must implement [" . class_basename(ArrayableMerchant::class) . "]");
+            throw new InvalidArgumentException("Specified merchant must be an array or must implement [" . class_basename(ArrayableMerchant::class) . "]");
         }
         return ($merchant instanceof ArrayableMerchant) ? $merchant->toMerchantArray() : (array) $merchant;
     }
