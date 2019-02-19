@@ -1,0 +1,56 @@
+<?php
+
+namespace SzuniSoft\SzamlazzHu\Tests\Client;
+
+
+use SzuniSoft\SzamlazzHu\Client\Client;
+use SzuniSoft\SzamlazzHu\Client\Errors\InvalidClientConfigurationException;
+
+class BootstrapTest extends TestCase
+{
+
+    protected $guzzle;
+
+    protected function setUp()
+    {
+        parent::setUp();
+        $this->guzzle = new \GuzzleHttp\Client();
+    }
+
+    /** @test */
+    function initializes_when_cert_specified_but_enabled()
+    {
+
+        new Client([
+            'credentials' => [
+                'username' => 'test',
+                'password' => 'test'
+            ],
+            'certificate' => [
+                'enabled' => false,
+                'path' => '/test.pem'
+            ]
+        ], $this->guzzle);
+
+        $this->assertTrue(true);
+    }
+
+    /** @test */
+    function fails_when_enabled_but_disk_not_provided()
+    {
+
+        $this->expectException(InvalidClientConfigurationException::class);
+
+        new Client([
+            'credentials' => [
+                'username' => 'test',
+                'password' => 'test'
+            ],
+            'certificate' => [
+                'enabled' => true,
+                'path' => '/test.pem'
+            ]
+        ], $this->guzzle);
+    }
+
+}

@@ -54,7 +54,8 @@ use SzuniSoft\SzamlazzHu\ProformaInvoice;
 use SzuniSoft\SzamlazzHu\Receipt;
 use XMLWriter;
 
-class Client {
+class Client
+{
 
     use MerchantHolder,
         PaymentMethods,
@@ -212,12 +213,28 @@ class Client {
             'credentials.username' => 'required',
             'credentials.password' => 'required',
             'certificate.enabled' => ['required', 'boolean'],
-            'certificate.path' => ['required_if:certificate.enabled,' . (string)true, function ($attribute, $value, $fail) use (&$config) {
-                $disk = $config['certificate']['disk'];
-                if (!Storage::disk($disk)->exists(file_exists($value))) {
-                    return $fail("The specified cert file could not be resolved from disk [$disk] at path [$value]!");
+            'certificate' => ['sometimes', 'array'],
+            'certificate.disk' => ['required_if:certificate.enabled,1'],
+            'certificate.path' => [
+                'bail',
+                'required_if:certificate.enabled,1',
+                'required_with_all:certificate.disk',
+                function ($attribute, $value, $fail) use (&$config) {
+
+                    if (isset($config['certificate'])) {
+                        $certificate = $config['certificate'];
+
+                        if (isset($certificate['disk'])) {
+
+                            $disk = $config['certificate']['disk'];
+                            if (!Storage::disk($disk)->exists(file_exists($value))) {
+                                return $fail("The specified cert file could not be resolved from disk [$disk] at path [$value]!");
+                            }
+                        }
+                    }
+
                 }
-            }],
+            ],
             'timeout' => ['integer', 'min:10', 'max:300'],
             'base_uri' => ['url']
         ]))->fails()) {
@@ -318,8 +335,7 @@ class Client {
 
             if ($model instanceof AbstractInvoice) {
                 throw new InvoiceValidationException($model, $validator);
-            }
-            else if ($model instanceof Receipt) {
+            } else if ($model instanceof Receipt) {
                 throw new ReceiptValidationException($model, $validator);
             }
         }
@@ -357,11 +373,9 @@ class Client {
 
         if ($response->hasHeader('szlahu_error_code')) {
             $code = $response->getHeader('szlahu_error_code')[0];
-        }
-        else if ($this->isAuthenticationError($response)) {
+        } else if ($this->isAuthenticationError($response)) {
             $code = 2;
-        }
-        else if (preg_match("/<hibakod>([0-9]+)\<\/hibakod>/", (string)$response->getBody(), $matches)) {
+        } else if (preg_match("/<hibakod>([0-9]+)\<\/hibakod>/", (string)$response->getBody(), $matches)) {
             if (isset($matches[1]) && is_numeric($matches[1])) {
                 $code = (int)$matches[1];
             }
@@ -641,8 +655,7 @@ class Client {
          * */
         if (!$invoice->hasMerchant() && $this->defaultMerchant === null) {
             throw new InvalidArgumentException("No merchant configured on invoice! Please specify the merchant on the invoice or setup the default merchant in the configuration!");
-        }
-        else if (!$invoice->hasMerchant() && $this->defaultMerchant) {
+        } else if (!$invoice->hasMerchant() && $this->defaultMerchant) {
             $invoice->setMerchant($this->defaultMerchant);
         }
 
@@ -1096,8 +1109,7 @@ class Client {
                 $this->writeCredentials($writer);
                 if ($orderNumber) {
                     $writer->writeElement('rendelesSzam', $orderNumber);
-                }
-                else {
+                } else {
                     $writer->writeElement('szamlaszam', $invoiceNumber);
                 }
             },
