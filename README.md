@@ -1,3 +1,8 @@
+[![Build Status](https://travis-ci.com/SzuniSOFT/laravel-szamlazzhu.svg?branch=master)](https://travis-ci.com/SzuniSOFT/laravel-szamlazzhu)
+[![Latest Stable Version](https://poser.pugx.org/szunisoft/laravel-szamlazzhu/version)](https://packagist.org/packages/szunisoft/laravel-szamlazzhu)
+[![Latest Stable Version](https://poser.pugx.org/szunisoft/laravel-szamlazzhu/downloads)](https://packagist.org/packages/szunisoft/laravel-szamlazzhu)
+[![License](https://poser.pugx.org/szunisoft/laravel-szamlazzhu/license)](https://packagist.org/packages/szunisoft/laravel-szamlazzhu)
+
 # laravel-szamlazzhu
 Implementation for Laravel which was made to support Szamlazz.hu Agent version of **3.4** and higher.
 
