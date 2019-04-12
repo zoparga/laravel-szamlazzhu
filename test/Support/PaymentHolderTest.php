@@ -18,7 +18,7 @@ class PaymentHolderTest extends TestCase {
      */
     protected $holder;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->holder = new PaymentHolder();

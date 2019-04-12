@@ -11,7 +11,7 @@ class BootstrapTest extends TestCase
 
     protected $guzzle;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->guzzle = new \GuzzleHttp\Client();

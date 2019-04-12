@@ -19,7 +19,7 @@ class ModelClientInteractionTest extends \Orchestra\Testbench\TestCase {
      */
     protected $client;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
