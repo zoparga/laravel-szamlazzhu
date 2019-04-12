@@ -227,7 +227,7 @@ class Client
                         if (isset($certificate['disk'])) {
 
                             $disk = $config['certificate']['disk'];
-                            if (!Storage::disk($disk)->exists(file_exists($value))) {
+                            if (!Storage::disk($disk)->exists($value)) {
                                 return $fail("The specified cert file could not be resolved from disk [$disk] at path [$value]!");
                             }
                         }
