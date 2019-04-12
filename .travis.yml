@@ -1,0 +1,29 @@
+language: php
+
+sudo: false
+
+php:
+  - 7.2
+  - 7.1
+
+env:
+  - LARAVEL_VERSION=5.8.*
+  - LARAVEL_VERSION=5.7.*
+  - LARAVEL_VERSION=5.6.*
+  - LARAVEL_VERSION=5.5.*
+
+matrix:
+  fast_finish: true
+
+before_install:
+  - composer require "laravel/framework:${LARAVEL_VERSION}" --no-update
+
+before_script:
+  - travis_retry composer install --prefer-source --no-interaction
+  - composer update
+
+scripts:
+  - phpunit -c phpunit.xml
+
+notifications:
+  email: false
