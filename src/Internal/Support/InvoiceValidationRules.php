@@ -117,7 +117,7 @@ trait InvoiceValidationRules {
             'items.*.quantity' => ['required', 'integer', 'min:1'],
             'items.*.quantityUnit' => ['required', 'string'],
             'items.*.netUnitPrice' => ['required', 'numeric'],
-            'items.*.taxRate' => ['required', 'numeric'],
+            'items.*.taxRate' => ['required'],
             'items.*.id' => ['sometimes'],
             'items.*.taxValue' => ['numeric'],
             'items.*.totalGrossPrice' => ['numeric'],
