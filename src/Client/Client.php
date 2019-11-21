@@ -780,7 +780,7 @@ class Client
                         $writer->writeElement('afakulcs', $item['taxRate']);
 
                         $netUnitPrice = $item['netUnitPrice'];
-                        $taxRate = $item['taxRate'];
+                        $taxRate = is_numeric($item['taxRate']) ? $item['taxRate'] : 0;
                         $quantity = $item['quantity'];
                         $netPrice = isset($item['netPrice'])
                             ? $item['netPrice']
@@ -1182,7 +1182,7 @@ class Client
                         'quantity' => (double)$item['mennyiseg'],
                         'quantityUnit' => $item['mennyisegiegyseg'],
                         'netUnitPrice' => (double)$item['nettoegysegar'],
-                        'taxRate' => (double)$item['afakulcs'],
+                        'taxRate' => is_numeric($item['afakulcs']) ? (double)$item['afakulcs'] : $item['afakulcs'],
                         'totalNetPrice' => (double)$item['netto'],
                         'taxValue' => (double)$item['afa'],
                         'totalGrossPrice' => (double)$item['brutto'],
@@ -1266,7 +1266,7 @@ class Client
                     $writer->writeElement('afakulcs', $item['taxRate']);
 
                     $netUnitPrice = $item['netUnitPrice'];
-                    $taxRate = $item['taxRate'];
+                    $taxRate = is_numeric($item['taxRate']) ? $item['taxRate'] : 0;
                     $quantity = $item['quantity'];
                     $netPrice = isset($item['netPrice']) ? $item['netPrice'] : ($netUnitPrice * $quantity);
                     $grossPrice = isset($item['grossPrice']) ? $item['grossPrice'] : $netPrice * (1 + ($taxRate / 100));
@@ -1495,7 +1495,7 @@ class Client
                             'quantityUnit' => $item['mennyisegiEgyseg'],
                             'netUnitPrice' => (double)$item['nettoEgysegar'],
                             'totalNetPrice' => (double)$item['netto'],
-                            'taxRate' => (double)$item['afakulcs'],
+                            'taxRate' => is_numeric($item['afakulcs']) ? (double)$item['afakulcs'] : $item['afakulcs'],
                             'taxValue' => (double)$item['afa'],
                             'totalGrossPrice' => (double)$item['brutto']
                         ];
