@@ -103,7 +103,7 @@ trait InvoiceValidationRules {
             'customerAddress' => ['required', 'string', 'max:255'],
             'customerEmail' => ['email'],
             'customerReceivesEmail' => ['boolean'],
-            'customerTaxNumber' => ['string', 'alpha_dash'],
+            'customerTaxNumber' => ['string', 'alpha_dash', 'nullable'],
             'customerShippingName' => ['string', 'max:255'],
             'customerShippingZipCode' => ['string', 'max:255'],
             'customerShippingCity' => ['string', 'max:255'],
