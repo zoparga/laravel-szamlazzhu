@@ -35,7 +35,7 @@ class CustomerHolderTest extends TestCase {
 
         $this->assertFalse($this->holder->hasCustomer());
         $this->holder->setCustomer($customer);
-        $this->assertInternalType('array', $this->holder->getCustomer());
+        $this->assertIsArray($this->holder->getCustomer());
     }
 
     /** @test */

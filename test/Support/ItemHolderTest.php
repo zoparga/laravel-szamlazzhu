@@ -73,7 +73,7 @@ class ItemHolderTest extends TestCase {
     public function it_can_add_array_item()
     {
         $this->holder->addItem($this->itemArray());
-        $this->assertEquals($this->holder->items()->count(), 1);
+        $this->assertEquals(1,$this->holder->items()->count());
         $this->assertSame($this->holder->items()->first(), $this->itemArray());
     }
 

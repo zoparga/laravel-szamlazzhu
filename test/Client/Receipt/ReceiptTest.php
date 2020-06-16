@@ -96,10 +96,10 @@ class ReceiptTest extends TestCase {
 
             $this->assertArrayHasKey('exchangeRateBank', $messages);
             $this->assertArrayHasKey('exchangeRate', $messages);
-            $this->assertEquals(count($messages['exchangeRateBank']), 1);
-            $this->assertEquals(count($messages['exchangeRate']), 1);
-            $this->assertRegExp('/^.*?field is required unless currency is in Ft.*?$/', $messages['exchangeRateBank'][0]);
-            $this->assertRegExp('/^.*?field is required unless exchange rate bank is in MNB, currency, Ft, currency, HUF.*?$/', $messages['exchangeRate'][0]);
+            $this->assertCount(1, $messages['exchangeRateBank']);
+            $this->assertCount(1, $messages['exchangeRate']);
+            $this->assertMatchesRegularExpression('/^.*?field is required unless currency is in Ft.*?$/', $messages['exchangeRateBank'][0]);
+            $this->assertMatchesRegularExpression('/^.*?field is required unless exchange rate bank is in MNB, currency, Ft, currency, HUF.*?$/', $messages['exchangeRate'][0]);
         }
     }
 
