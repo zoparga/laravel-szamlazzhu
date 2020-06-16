@@ -7,7 +7,8 @@ namespace SzuniSoft\SzamlazzHu\Providers;
 use Illuminate\Support\ServiceProvider;
 use SzuniSoft\SzamlazzHu\Client\Client;
 
-class SzamlazzHuServiceProvider extends ServiceProvider {
+class SzamlazzHuServiceProvider extends ServiceProvider
+{
 
     protected $defer = true;
 
@@ -48,7 +49,9 @@ class SzamlazzHuServiceProvider extends ServiceProvider {
     {
 
         // Publish config
-        $this->publishes([__DIR__ . '/../../config/config.php'], 'config');
+        $this->publishes([
+            __DIR__ . '/../../config/config.php' => config_path('szamlazz-hu.php'),
+        ], 'config');
     }
 
     /**
