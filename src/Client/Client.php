@@ -12,9 +12,8 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
-use Nathanmac\Utilities\Parser\Exceptions\ParserException;
-use Nathanmac\Utilities\Parser\Parser;
 use Psr\Http\Message\ResponseInterface;
+use RuntimeException;
 use SzuniSoft\SzamlazzHu\Client\ApiErrors\AuthenticationException;
 use SzuniSoft\SzamlazzHu\Client\ApiErrors\CannotCreateInvoiceException;
 use SzuniSoft\SzamlazzHu\Client\ApiErrors\CommonResponseException;
@@ -52,6 +51,7 @@ use SzuniSoft\SzamlazzHu\Internal\Support\ReceiptValidationRules;
 use SzuniSoft\SzamlazzHu\Invoice;
 use SzuniSoft\SzamlazzHu\ProformaInvoice;
 use SzuniSoft\SzamlazzHu\Receipt;
+use SzuniSoft\SzamlazzHu\Util\XmlParser;
 use XMLWriter;
 
 class Client
@@ -61,7 +61,8 @@ class Client
         PaymentMethods,
         NormalizeParsedNumericArrays,
         InvoiceValidationRules,
-        ReceiptValidationRules;
+        ReceiptValidationRules,
+        XmlParser;
 
     /*
      * All the available actions.
@@ -69,8 +70,8 @@ class Client
     private const ACTIONS = [
 
         // Used for cancelling (existing) invoices
-        'CANCEL_INVOICE' => [
-            'name' => 'action-szamla_agent_st',
+        'CANCEL_INVOICE'          => [
+            'name'   => 'action-szamla_agent_st',
             'schema' => [
                 /*
                  * Important! Please always note order
@@ -78,68 +79,68 @@ class Client
                 'xmlszamlast', // Action name
                 'http://www.szamlazz.hu/xmlszamlast', // Namespace
                 'http://www.szamlazz.hu/xmlszamlast xmlszamlast.xsd' // Schema location
-            ]
+            ],
         ],
 
         // Used for deleting (existing) proforma invoices
         'DELETE_PROFORMA_INVOICE' => [
-            'name' => 'action-szamla_agent_dijbekero_torlese',
+            'name'   => 'action-szamla_agent_dijbekero_torlese',
             'schema' => [
                 'xmlszamladbkdel',
                 'http://www.szamlazz.hu/xmlszamladbkdel',
-                'http://www.szamlazz.hu/xmlszamladbkdel http://www.szamlazz.hu/docs/xsds/szamladbkdel/xmlszamladbkdel.xsd'
-            ]
+                'http://www.szamlazz.hu/xmlszamladbkdel http://www.szamlazz.hu/docs/xsds/szamladbkdel/xmlszamladbkdel.xsd',
+            ],
         ],
 
         // Used for obtaining (both) invoices and proforma invoices
-        'GET_COMMON_INVOICE' => [
-            'name' => 'action-szamla_agent_xml',
+        'GET_COMMON_INVOICE'      => [
+            'name'   => 'action-szamla_agent_xml',
             'schema' => [
                 'xmlszamlaxml',
                 'http://www.szamlazz.hu/xmlszamlaxml',
-                'http://www.szamlazz.hu/xmlszamlaxml http://www.szamlazz.hu/docs/xsds/agentpdf/xmlszamlaxml.xsd'
-            ]
+                'http://www.szamlazz.hu/xmlszamlaxml http://www.szamlazz.hu/docs/xsds/agentpdf/xmlszamlaxml.xsd',
+            ],
         ],
 
         // Used to upload (create) new common and proforma invoice
-        'UPLOAD_COMMON_INVOICE' => [
-            'name' => 'action-xmlagentxmlfile',
+        'UPLOAD_COMMON_INVOICE'   => [
+            'name'   => 'action-xmlagentxmlfile',
             'schema' => [
                 'xmlszamla',
                 'http://www.szamlazz.hu/xmlszamla',
-                'http://www.szamlazz.hu/xmlszamla http://www.szamlazz.hu/docs/xsds/agent/xmlszamla.xsd'
-            ]
+                'http://www.szamlazz.hu/xmlszamla http://www.szamlazz.hu/docs/xsds/agent/xmlszamla.xsd',
+            ],
         ],
 
         // Used to create / update receipt
-        'UPLOAD_RECEIPT' => [
-            'name' => 'action-szamla_agent_nyugta_create',
+        'UPLOAD_RECEIPT'          => [
+            'name'   => 'action-szamla_agent_nyugta_create',
             'schema' => [
                 'xmlnyugtacreate',
                 'http://www.szamlazz.hu/xmlnyugtacreate',
-                'http://www.szamlazz.hu/xmlnyugtacreate http://www.szamlazz.hu/docs/xsds/nyugta/xmlnyugtacreate.xsd'
-            ]
+                'http://www.szamlazz.hu/xmlnyugtacreate http://www.szamlazz.hu/docs/xsds/nyugta/xmlnyugtacreate.xsd',
+            ],
         ],
 
         // Cancelling receipt
-        'CANCEL_RECEIPT' => [
-            'name' => 'action-szamla_agent_nyugta_storno',
+        'CANCEL_RECEIPT'          => [
+            'name'   => 'action-szamla_agent_nyugta_storno',
             'schema' => [
                 'xmlnyugtast',
                 'http://www.szamlazz.hu/xmlnyugtast',
-                'http://www.szamlazz.hu/xmlnyugtast http://www.szamlazz.hu/docs/xsds/nyugtast/xmlnyugtast.xsd'
-            ]
+                'http://www.szamlazz.hu/xmlnyugtast http://www.szamlazz.hu/docs/xsds/nyugtast/xmlnyugtast.xsd',
+            ],
         ],
 
         // Obtaining a single receipt
-        'GET_RECEIPT' => [
-            'name' => 'action-szamla_agent_nyugta_get',
+        'GET_RECEIPT'             => [
+            'name'   => 'action-szamla_agent_nyugta_get',
             'schema' => [
                 'xmlnyugtaget',
                 'http://www.szamlazz.hu/xmlnyugtaget',
-                'http://www.szamlazz.hu/xmlnyugtaget http://www.szamlazz.hu/docs/xsds/nyugtaget/xmlnyugtaget.xsd'
-            ]
-        ]
+                'http://www.szamlazz.hu/xmlnyugtaget http://www.szamlazz.hu/docs/xsds/nyugtaget/xmlnyugtaget.xsd',
+            ],
+        ],
     ];
 
     /**
@@ -158,15 +159,15 @@ class Client
      * @var array
      */
     protected $defaultConfig = [
-        'timeout' => 30,
-        'base_uri' => 'https://www.szamlazz.hu/',
+        'timeout'     => 30,
+        'base_uri'    => 'https://www.szamlazz.hu/',
         'certificate' => [
             'enabled' => false,
         ],
-        'storage' => [
+        'storage'     => [
             'auto_save' => false,
-            'disk' => 'local',
-            'path' => 'szamlazzhu'
+            'disk'      => 'local',
+            'path'      => 'szamlazzhu',
         ],
     ];
 
@@ -177,9 +178,11 @@ class Client
 
     /**
      * Client constructor.
-     * @param array $config
-     * @param \GuzzleHttp\Client $client
+     *
+     * @param array                   $config
+     * @param \GuzzleHttp\Client      $client
      * @param array|ArrayableMerchant $merchant
+     *
      * @throws InvalidClientConfigurationException
      */
     public function __construct(array $config, \GuzzleHttp\Client $client, $merchant = null)
@@ -204,6 +207,7 @@ class Client
 
     /**
      * @param array $config
+     *
      * @throws InvalidClientConfigurationException
      */
     protected static function validateConfig(array $config)
@@ -212,10 +216,10 @@ class Client
         if (($validator = Validator::make($config, [
             'credentials.username' => 'required',
             'credentials.password' => 'required',
-            'certificate.enabled' => ['required', 'boolean'],
-            'certificate' => ['sometimes', 'array'],
-            'certificate.disk' => ['required_if:certificate.enabled,1'],
-            'certificate.path' => [
+            'certificate.enabled'  => ['required', 'boolean'],
+            'certificate'          => ['sometimes', 'array'],
+            'certificate.disk'     => ['required_if:certificate.enabled,1'],
+            'certificate.path'     => [
                 'bail',
                 'required_if:certificate.enabled,1',
                 'required_with_all:certificate.disk',
@@ -233,10 +237,10 @@ class Client
                         }
                     }
 
-                }
+                },
             ],
-            'timeout' => ['integer', 'min:10', 'max:300'],
-            'base_uri' => ['url']
+            'timeout'              => ['integer', 'min:10', 'max:300'],
+            'base_uri'             => ['url'],
         ]))->fails()) {
             throw new InvalidClientConfigurationException($validator);
         }
@@ -278,6 +282,7 @@ class Client
 
     /**
      * @param $value
+     *
      * @return string
      */
     protected function stringifyBoolean($value)
@@ -289,6 +294,7 @@ class Client
 
     /**
      * @param $value
+     *
      * @return string
      */
     protected function commonCurrencyFormat($value)
@@ -298,8 +304,8 @@ class Client
 
     /**
      * @param XMLWriter $writer
-     * @param $element
-     * @param $content
+     * @param           $element
+     * @param           $content
      */
     protected function writeCdataElement(XMLWriter &$writer, $element, $content)
     {
@@ -310,7 +316,8 @@ class Client
 
     /**
      * @param AbstractModel $abstractModel
-     * @param array $rules
+     * @param array         $rules
+     *
      * @return \Illuminate\Contracts\Validation\Validator
      */
     protected function modelValidator(AbstractModel $abstractModel, array $rules)
@@ -322,7 +329,8 @@ class Client
      * Validates invoice against the specified rules
      *
      * @param AbstractModel $model
-     * @param array $rules
+     * @param array         $rules
+     *
      * @return bool
      * @throws ReceiptValidationException
      * @throws InvoiceValidationException
@@ -335,7 +343,8 @@ class Client
 
             if ($model instanceof AbstractInvoice) {
                 throw new InvoiceValidationException($model, $validator);
-            } else if ($model instanceof Receipt) {
+            }
+            elseif ($model instanceof Receipt) {
                 throw new ReceiptValidationException($model, $validator);
             }
         }
@@ -344,17 +353,19 @@ class Client
 
     /**
      * @param ResponseInterface $response
+     *
      * @return bool
      */
     protected function isAuthenticationError(ResponseInterface $response)
     {
         try {
-            $xml = (new Parser)->xml((string)$response->getBody());
+            $xml = $this->parse((string)$response->getBody());
             if (isset($xml['sikeres']) && $xml['sikeres'] === 'false'
                 && isset($xml['hibauzenet']) && $xml['hibauzenet'] === 'Sikertelen bejelentkezés.') {
                 return true;
             }
-        } catch (ParserException $e) {
+        }
+        catch (RuntimeException $e) {
             return false;
         }
     }
@@ -363,19 +374,22 @@ class Client
      * Converts API error to catchable local exception
      *
      * @param ResponseInterface $response
+     *
      * @throws CommonResponseException
      */
     protected function convertResponseToException(ResponseInterface $response)
     {
 
-        $code = 500;
+        $code    = 500;
         $message = 'Unknown error';
 
         if ($response->hasHeader('szlahu_error_code')) {
             $code = $response->getHeader('szlahu_error_code')[0];
-        } else if ($this->isAuthenticationError($response)) {
+        }
+        elseif ($this->isAuthenticationError($response)) {
             $code = 2;
-        } else if (preg_match("/<hibakod>([0-9]+)\<\/hibakod>/", (string)$response->getBody(), $matches)) {
+        }
+        elseif (preg_match("/<hibakod>([0-9]+)\<\/hibakod>/", (string)$response->getBody(), $matches)) {
             if (isset($matches[1]) && is_numeric($matches[1])) {
                 $code = (int)$matches[1];
             }
@@ -449,6 +463,7 @@ class Client
      * Process the response obtained over HTTP
      *
      * @param ResponseInterface $response
+     *
      * @return ResponseInterface
      * @throws CommonResponseException
      */
@@ -469,14 +484,15 @@ class Client
      * @param string $contents
      * @param string $uri
      * @param string $method
+     *
      * @return ResponseInterface
      */
     protected function send(string $action, string $contents, $uri = '/szamla/', $method = 'POST')
     {
 
         $options = [
-            'timeout' => $this->config['timeout'],
-            'base_uri' => $this->config['base_uri']
+            'timeout'  => $this->config['timeout'],
+            'base_uri' => $this->config['base_uri'],
         ];
 
         /*
@@ -492,10 +508,10 @@ class Client
         if ($action && $contents) {
             $options['multipart'] = [
                 [
-                    'name' => $action,
+                    'name'     => $action,
                     'filename' => 'invoice.xml',
-                    'contents' => $contents
-                ]
+                    'contents' => $contents,
+                ],
             ];
         };
 
@@ -509,10 +525,11 @@ class Client
     }
 
     /**
-     * @param $disk
-     * @param $path
+     * @param        $disk
+     * @param        $path
      * @param string $pdfContent
      * @param string $as
+     *
      * @return bool
      */
     protected function updatePdfFile($disk, $path, $pdfContent, $as)
@@ -538,10 +555,11 @@ class Client
 
     /**
      * @param string $invoiceClass
-     * @param array $head
-     * @param array $customer
-     * @param array $merchant
-     * @param array $items
+     * @param array  $head
+     * @param array  $customer
+     * @param array  $merchant
+     * @param array  $items
+     *
      * @return AbstractInvoice|ClientAccessor|Invoice|ProformaInvoice
      */
     protected function invoiceFactory($invoiceClass, array $head, array $customer, array $merchant, array $items)
@@ -554,9 +572,10 @@ class Client
 
     /**
      * @param callable|Closure $write
-     * @param $root
-     * @param string $namespace
-     * @param string $schemaLocation
+     * @param                  $root
+     * @param string           $namespace
+     * @param string           $schemaLocation
+     *
      * @return string
      */
     protected function writer(
@@ -583,6 +602,7 @@ class Client
 
     /**
      * @param Receipt $receipt
+     *
      * @return bool
      * @throws ReceiptValidationException|ModelValidationException
      */
@@ -593,6 +613,7 @@ class Client
 
     /**
      * @param Invoice $invoice
+     *
      * @return bool
      * @throws InvoiceValidationException|ModelValidationException
      */
@@ -603,6 +624,7 @@ class Client
 
     /**
      * @param ProformaInvoice $invoice
+     *
      * @return bool
      * @throws InvoiceValidationException|ModelValidationException
      */
@@ -613,9 +635,10 @@ class Client
 
     /**
      * @param ProformaInvoice $invoice
-     * @param bool $withoutPdf
-     * @param null $emailSubject
-     * @param null $emailMessage
+     * @param bool            $withoutPdf
+     * @param null            $emailSubject
+     * @param null            $emailMessage
+     *
      * @return InvoiceCreationResponse
      * @throws ModelValidationException
      */
@@ -628,11 +651,12 @@ class Client
      * Creates invoice
      *
      * @param Invoice $invoice
-     * @param bool $withoutPdf
-     * @param null $emailSubject
-     * @param null $emailMessage
+     * @param bool    $withoutPdf
+     * @param null    $emailSubject
+     * @param null    $emailMessage
+     *
      * @return InvoiceCreationResponse
-     * @throws InvoiceValidationException
+     * @throws \SzuniSoft\SzamlazzHu\Client\Errors\ModelValidationException
      */
     public function uploadInvoice(Invoice $invoice, $withoutPdf = false, $emailSubject = null, $emailMessage = null)
     {
@@ -641,9 +665,10 @@ class Client
 
     /**
      * @param AbstractInvoice $invoice
-     * @param bool $withoutPdf
-     * @param null $emailSubject
-     * @param null $emailMessage
+     * @param bool            $withoutPdf
+     * @param null            $emailSubject
+     * @param null            $emailMessage
+     *
      * @return InvoiceCreationResponse
      * @throws ModelValidationException
      */
@@ -655,7 +680,8 @@ class Client
          * */
         if (!$invoice->hasMerchant() && $this->defaultMerchant === null) {
             throw new InvalidArgumentException("No merchant configured on invoice! Please specify the merchant on the invoice or setup the default merchant in the configuration!");
-        } else if (!$invoice->hasMerchant() && $this->defaultMerchant) {
+        }
+        elseif (!$invoice->hasMerchant() && $this->defaultMerchant) {
             $invoice->setMerchant($this->defaultMerchant);
         }
 
@@ -780,15 +806,15 @@ class Client
                         $writer->writeElement('afakulcs', $item['taxRate']);
 
                         $netUnitPrice = $item['netUnitPrice'];
-                        $taxRate = is_numeric($item['taxRate']) ? $item['taxRate'] : 0;
-                        $quantity = $item['quantity'];
-                        $netPrice = isset($item['netPrice'])
+                        $taxRate      = is_numeric($item['taxRate']) ? $item['taxRate'] : 0;
+                        $quantity     = $item['quantity'];
+                        $netPrice     = isset($item['netPrice'])
                             ? $item['netPrice']
                             : ($netUnitPrice * $quantity);
-                        $grossPrice = isset($item['grossPrice'])
+                        $grossPrice   = isset($item['grossPrice'])
                             ? $item['grossPrice']
                             : $netPrice * (1 + ($taxRate / 100));
-                        $taxValue = isset($item['taxValue'])
+                        $taxValue     = isset($item['taxValue'])
                             ? $item['taxValue']
                             : ($grossPrice - $netPrice);
 
@@ -848,7 +874,9 @@ class Client
 
     /**
      * Deletes only proforma invoices
+     *
      * @param ProformaInvoice $invoice
+     *
      * @return ProformaInvoiceDeletionResponse
      * @throws ModelValidationException
      */
@@ -887,10 +915,12 @@ class Client
 
     /**
      * Cancels (existing) invoice
+     *
      * @param Invoice $invoice
-     * @param bool $withoutPdf
-     * @param null $emailSubject
-     * @param null $emailMessage
+     * @param bool    $withoutPdf
+     * @param null    $emailSubject
+     * @param null    $emailMessage
+     *
      * @return InvoiceCancellationResponse
      * @throws InvoiceValidationException
      * @throws ReceiptValidationException
@@ -1000,6 +1030,7 @@ class Client
 
     /**
      * @param $orderNumber
+     *
      * @return Invoice|ProformaInvoice|AbstractInvoice
      * @throws CommonResponseException
      */
@@ -1007,20 +1038,22 @@ class Client
     {
         try {
             return $this->getInvoiceByOrderNumberOrFail($orderNumber);
-        } catch (InvoiceNotFoundException $exception) {
+        }
+        catch (InvoiceNotFoundException $exception) {
             return null;
         }
     }
 
     /**
      * @param $orderNumber
+     *
      * @return mixed
      * @throws CommonResponseException
      * @throws InvoiceNotFoundException
      */
     public function getInvoiceByOrderNumberOrFail($orderNumber)
     {
-        list($head, $customer, $merchant, $items) = $this->getCommonInvoice(null, $orderNumber);
+        [$head, $customer, $merchant, $items] = $this->getCommonInvoice(null, $orderNumber);
         return $this->invoiceFactory(
             $head['isPrepaymentRequest'] ? ProformaInvoice::class : Invoice::class,
             $head, $customer, $merchant, $items
@@ -1029,6 +1062,7 @@ class Client
 
     /**
      * @param string|Invoice $invoice
+     *
      * @return AbstractInvoice|Invoice|ProformaInvoice
      * @throws CommonResponseException
      * @throws InvoiceNotFoundException
@@ -1044,6 +1078,7 @@ class Client
 
     /**
      * @param string|Invoice $invoice
+     *
      * @return null|AbstractInvoice|Invoice|ProformaInvoice
      * @throws CommonResponseException
      */
@@ -1051,13 +1086,15 @@ class Client
     {
         try {
             return $this->getInvoiceOrFail($invoice);
-        } catch (InvoiceNotFoundException $exception) {
+        }
+        catch (InvoiceNotFoundException $exception) {
             return null;
         }
     }
 
     /**
      * @param string|ProformaInvoice $invoice
+     *
      * @return AbstractInvoice|Invoice|ProformaInvoice
      * @throws CommonResponseException
      * @throws InvoiceNotFoundException
@@ -1074,6 +1111,7 @@ class Client
 
     /**
      * @param string|ProformaInvoice $invoice
+     *
      * @return null|ProformaInvoice
      * @throws CommonResponseException
      */
@@ -1081,14 +1119,16 @@ class Client
     {
         try {
             return $this->getProformaInvoiceOrFail($invoice);
-        } catch (InvoiceNotFoundException $exception) {
+        }
+        catch (InvoiceNotFoundException $exception) {
             return null;
         }
     }
 
     /**
      * @param string|AbstractInvoice|null $invoiceNumber
-     * @param null $orderNumber
+     * @param null                        $orderNumber
+     *
      * @return array
      * @throws CommonResponseException
      * @throws InvoiceNotFoundException
@@ -1109,7 +1149,8 @@ class Client
                 $this->writeCredentials($writer);
                 if ($orderNumber) {
                     $writer->writeElement('rendelesSzam', $orderNumber);
-                } else {
+                }
+                else {
                     $writer->writeElement('szamlaszam', $invoiceNumber);
                 }
             },
@@ -1123,24 +1164,24 @@ class Client
              * */
             $contents = (string)$this->send(self::ACTIONS['GET_COMMON_INVOICE']['name'], $contents)->getBody();
 
-            $xml = (new Parser)->xml($contents);
+            $xml = $this->parse($contents);
 
 
             // General attributes
             $head = [
-                'isElectronic' => Str::startsWith($xml['alap']['szamlaszam'], 'E-'),
+                'isElectronic'        => Str::startsWith($xml['alap']['szamlaszam'], 'E-'),
                 'isPrepaymentRequest' => Str::startsWith($xml['alap']['szamlaszam'], 'D-'),
-                'invoiceNumber' => $xml['alap']['szamlaszam'],
-                'createdAt' => Carbon::createFromFormat('Y-m-d', $xml['alap']['kelt']),
-                'fulfillmentAt' => Carbon::createFromFormat('Y-m-d', $xml['alap']['telj']),
-                'paymentDeadline' => Carbon::createFromFormat('Y-m-d', $xml['alap']['fizh']),
-                'paymentMethod' => $this->getPaymentMethod(html_entity_decode($xml['alap']['fizmod'])),
-                'invoiceLanguage' => $xml['alap']['nyelv'],
-                'currency' => $xml['alap']['devizanem'],
-                'exchangeRateBank' => isset($xml['alap']['devizabank']) ? $xml['alap']['devizabank'] : null,
-                'exchangeRate' => isset($xml['alap']['devizaarf']) ? $xml['alap']['devizaarf'] : null,
-                'comment' => html_entity_decode($xml['alap']['megjegyzes']),
-                'isKata' => $xml['alap']['kata'] == 'true',
+                'invoiceNumber'       => $xml['alap']['szamlaszam'],
+                'createdAt'           => Carbon::createFromFormat('Y-m-d', $xml['alap']['kelt']),
+                'fulfillmentAt'       => Carbon::createFromFormat('Y-m-d', $xml['alap']['telj']),
+                'paymentDeadline'     => Carbon::createFromFormat('Y-m-d', $xml['alap']['fizh']),
+                'paymentMethod'       => $this->getPaymentMethod(html_entity_decode($xml['alap']['fizmod'])),
+                'invoiceLanguage'     => $xml['alap']['nyelv'],
+                'currency'            => $xml['alap']['devizanem'],
+                'exchangeRateBank'    => isset($xml['alap']['devizabank']) ? $xml['alap']['devizabank'] : null,
+                'exchangeRate'        => isset($xml['alap']['devizaarf']) ? $xml['alap']['devizaarf'] : null,
+                'comment'             => html_entity_decode($xml['alap']['megjegyzes']),
+                'isKata'              => $xml['alap']['kata'] == 'true',
             ];
 
             if (isset($xml['alap']['hivdijbekszam'])) {
@@ -1153,24 +1194,24 @@ class Client
 
             // Customer fields
             $customer = [
-                'customerName' => html_entity_decode($xml['vevo']['nev']),
-                'customerCountry' => html_entity_decode($xml['vevo']['cim']['orszag']),
-                'customerZipCode' => $xml['vevo']['cim']['irsz'],
-                'customerCity' => html_entity_decode($xml['vevo']['cim']['telepules']),
-                'customerAddress' => $xml['vevo']['cim']['cim'],
+                'customerName'      => html_entity_decode($xml['vevo']['nev']),
+                'customerCountry'   => html_entity_decode($xml['vevo']['cim']['orszag']),
+                'customerZipCode'   => $xml['vevo']['cim']['irsz'],
+                'customerCity'      => html_entity_decode($xml['vevo']['cim']['telepules']),
+                'customerAddress'   => $xml['vevo']['cim']['cim'],
                 'customerTaxNumber' => $xml['vevo']['adoszam'],
             ];
 
             // Merchant fields
             $merchant = [
-                'merchantName' => html_entity_decode($xml['szallito']['nev']),
-                'merchantCountry' => html_entity_decode($xml['szallito']['cim']['orszag']),
-                'merchantZipCode' => html_entity_decode($xml['szallito']['cim']['irsz']),
-                'merchantCity' => html_entity_decode($xml['szallito']['cim']['telepules']),
-                'merchantAddress' => html_entity_decode($xml['szallito']['cim']['cim']),
-                'merchantTaxNumber' => html_entity_decode($xml['szallito']['adoszam']),
-                'merchantEuTaxNumber' => isset($xml['szallito']['adoszameu']) ? html_entity_decode($xml['szallito']['adoszameu']) : null,
-                'merchantBank' => html_entity_decode($xml['szallito']['bank']['nev']),
+                'merchantName'              => html_entity_decode($xml['szallito']['nev']),
+                'merchantCountry'           => html_entity_decode($xml['szallito']['cim']['orszag']),
+                'merchantZipCode'           => html_entity_decode($xml['szallito']['cim']['irsz']),
+                'merchantCity'              => html_entity_decode($xml['szallito']['cim']['telepules']),
+                'merchantAddress'           => html_entity_decode($xml['szallito']['cim']['cim']),
+                'merchantTaxNumber'         => html_entity_decode($xml['szallito']['adoszam']),
+                'merchantEuTaxNumber'       => isset($xml['szallito']['adoszameu']) ? html_entity_decode($xml['szallito']['adoszameu']) : null,
+                'merchantBank'              => html_entity_decode($xml['szallito']['bank']['nev']),
                 'merchantBankAccountNumber' => $xml['szallito']['bank']['bankszamla'],
             ];
 
@@ -1178,27 +1219,29 @@ class Client
             $items = Collection::wrap($items = $this->normalizeToNumericArray($xml['tetelek']['tetel']))
                 ->map(function ($item) {
                     return [
-                        'name' => html_entity_decode($item['nev']),
-                        'quantity' => (double)$item['mennyiseg'],
-                        'quantityUnit' => $item['mennyisegiegyseg'],
-                        'netUnitPrice' => (double)$item['nettoegysegar'],
-                        'taxRate' => is_numeric($item['afakulcs']) ? (double)$item['afakulcs'] : $item['afakulcs'],
-                        'totalNetPrice' => (double)$item['netto'],
-                        'taxValue' => (double)$item['afa'],
+                        'name'            => html_entity_decode($item['nev']),
+                        'quantity'        => (double)$item['mennyiseg'],
+                        'quantityUnit'    => $item['mennyisegiegyseg'],
+                        'netUnitPrice'    => (double)$item['nettoegysegar'],
+                        'taxRate'         => is_numeric($item['afakulcs']) ? (double)$item['afakulcs'] : $item['afakulcs'],
+                        'totalNetPrice'   => (double)$item['netto'],
+                        'taxValue'        => (double)$item['afa'],
                         'totalGrossPrice' => (double)$item['brutto'],
-                        'comment' => html_entity_decode($item['megjegyzes'])
+                        'comment'         => html_entity_decode($item['megjegyzes']),
                     ];
                 })
                 ->toArray();
 
-        } catch (CommonResponseException $exception) {
+        }
+        catch (CommonResponseException $exception) {
 
             if (Str::contains((string)$exception->getResponse()->getBody(), '(ismeretlen számlaszám).')) {
                 throw new InvoiceNotFoundException($invoiceNumber);
             }
 
             throw $exception;
-        } catch (ParserException $exception) {
+        }
+        catch (ParserException $exception) {
             throw new InvoiceNotFoundException($invoiceNumber);
         }
 
@@ -1206,13 +1249,14 @@ class Client
             $head,
             $customer,
             $merchant,
-            $items
+            $items,
         ];
     }
 
     /**
      * @param Receipt $receipt
-     * @param bool $withoutPdf
+     * @param bool    $withoutPdf
+     *
      * @return ReceiptCreationResponse
      * @throws ModelValidationException
      */
@@ -1266,11 +1310,11 @@ class Client
                     $writer->writeElement('afakulcs', $item['taxRate']);
 
                     $netUnitPrice = $item['netUnitPrice'];
-                    $taxRate = is_numeric($item['taxRate']) ? $item['taxRate'] : 0;
-                    $quantity = $item['quantity'];
-                    $netPrice = isset($item['netPrice']) ? $item['netPrice'] : ($netUnitPrice * $quantity);
-                    $grossPrice = isset($item['grossPrice']) ? $item['grossPrice'] : $netPrice * (1 + ($taxRate / 100));
-                    $taxValue = isset($item['taxValue']) ? $item['taxValue'] : ($grossPrice - $netPrice);
+                    $taxRate      = is_numeric($item['taxRate']) ? $item['taxRate'] : 0;
+                    $quantity     = $item['quantity'];
+                    $netPrice     = isset($item['netPrice']) ? $item['netPrice'] : ($netUnitPrice * $quantity);
+                    $grossPrice   = isset($item['grossPrice']) ? $item['grossPrice'] : $netPrice * (1 + ($taxRate / 100));
+                    $taxValue     = isset($item['taxValue']) ? $item['taxValue'] : ($grossPrice - $netPrice);
 
                     $writer->writeElement('netto', $this->commonCurrencyFormat($netPrice));
                     $writer->writeElement('afa', $this->commonCurrencyFormat($taxValue));
@@ -1311,10 +1355,10 @@ class Client
 
         // Fill up related attributes
         $receipt->fill([
-            'callId' => $response->callId,
+            'callId'        => $response->callId,
             'receiptNumber' => $response->receiptNumber,
-            'createdAt' => $response->createdAt,
-            'isCancelled' => $response->isCancelled
+            'createdAt'     => $response->createdAt,
+            'isCancelled'   => $response->isCancelled,
         ]);
 
         /*
@@ -1335,7 +1379,8 @@ class Client
 
     /**
      * @param Receipt $receipt
-     * @param bool $withoutPdf
+     * @param bool    $withoutPdf
+     *
      * @return ReceiptCancellationResponse
      * @throws ModelValidationException
      */
@@ -1380,7 +1425,7 @@ class Client
 
         // Modify related attributes
         $receipt->fill([
-            'isCancelled' => true
+            'isCancelled' => true,
         ]);
 
         return $response;
@@ -1389,7 +1434,8 @@ class Client
 
     /**
      * @param Receipt $receipt
-     * @param bool $withoutPdf
+     * @param bool    $withoutPdf
+     *
      * @return null|Receipt
      * @throws ModelValidationException
      */
@@ -1397,14 +1443,16 @@ class Client
     {
         try {
             return $this->getReceiptOrFail($receipt, $withoutPdf);
-        } catch (ReceiptNotFoundException $exception) {
+        }
+        catch (ReceiptNotFoundException $exception) {
             return null;
         }
     }
 
     /**
      * @param Receipt $receipt
-     * @param bool $withoutPdf
+     * @param bool    $withoutPdf
+     *
      * @return Receipt
      * @throws ModelValidationException
      * @throws ReceiptNotFoundException
@@ -1418,22 +1466,25 @@ class Client
     }
 
     /**
-     * @param $receiptNumber
+     * @param      $receiptNumber
      * @param bool $withoutPdf
+     *
      * @return Receipt|null
      */
     public function getReceiptByReceiptNumber($receiptNumber, $withoutPdf = false)
     {
         try {
             return $this->getReceiptByReceiptNumberOrFail($receiptNumber, $withoutPdf);
-        } catch (ReceiptNotFoundException $exception) {
+        }
+        catch (ReceiptNotFoundException $exception) {
             return null;
         }
     }
 
     /**
      * @param string $receiptNumber
-     * @param bool $withoutPdf
+     * @param bool   $withoutPdf
+     *
      * @return Receipt
      * @throws ReceiptNotFoundException
      */
@@ -1462,26 +1513,26 @@ class Client
 
         try {
 
-            $xml = (new Parser)->xml($contents);
+            $xml = $this->parse($contents);
 
             // General attributes
             $head = [
-                'callId' => isset($xml['nyugta']['alap']['hivasAzonosito']) ? $xml['nyugta']['alap']['hivasAzonosito'] : null,
-                'receiptNumber' => $xml['nyugta']['alap']['nyugtaszam'],
-                'isCancelled' => $xml['nyugta']['alap']['stornozott'] === 'true',
-                'createdAt' => Carbon::createFromFormat('Y-m-d', $xml['nyugta']['alap']['kelt']),
-                'exchangeRateBank' => isset($xml['nyugta']['alap']['devizabank'])
+                'callId'                => isset($xml['nyugta']['alap']['hivasAzonosito']) ? $xml['nyugta']['alap']['hivasAzonosito'] : null,
+                'receiptNumber'         => $xml['nyugta']['alap']['nyugtaszam'],
+                'isCancelled'           => $xml['nyugta']['alap']['stornozott'] === 'true',
+                'createdAt'             => Carbon::createFromFormat('Y-m-d', $xml['nyugta']['alap']['kelt']),
+                'exchangeRateBank'      => isset($xml['nyugta']['alap']['devizabank'])
                     ? $xml['nyugta']['alap']['devizabank']
                     : null,
-                'exchangeRate' => isset($xml['nyugta']['alap']['devizaarf'])
+                'exchangeRate'          => isset($xml['nyugta']['alap']['devizaarf'])
                     ? (double)$xml['nyugta']['alap']['devizaarf']
                     : null,
-                'paymentMethod' => $this->getPaymentMethodByType(html_entity_decode($xml['nyugta']['alap']['fizmod'])),
-                'currency' => $xml['nyugta']['alap']['penznem'],
-                'comment' => isset($xml['nyugta']['alap']['megjegyzes']) ? $xml['nyugta']['alap']['megjegyzes'] : null,
+                'paymentMethod'         => $this->getPaymentMethodByType(html_entity_decode($xml['nyugta']['alap']['fizmod'])),
+                'currency'              => $xml['nyugta']['alap']['penznem'],
+                'comment'               => isset($xml['nyugta']['alap']['megjegyzes']) ? $xml['nyugta']['alap']['megjegyzes'] : null,
                 'originalReceiptNumber' => isset($xml['nyugta']['alap']['stornozottNyugtaszam'])
                     ? $xml['nyugta']['alap']['stornozottNyugtaszam']
-                    : null
+                    : null,
             ];
 
             // Items
@@ -1490,14 +1541,14 @@ class Client
                 $items = Collection::wrap($this->normalizeToNumericArray($xml['nyugta']['tetelek']['tetel']))
                     ->map(function ($item) {
                         return [
-                            'name' => $item['megnevezes'],
-                            'quantity' => (double)$item['mennyiseg'],
-                            'quantityUnit' => $item['mennyisegiEgyseg'],
-                            'netUnitPrice' => (double)$item['nettoEgysegar'],
-                            'totalNetPrice' => (double)$item['netto'],
-                            'taxRate' => is_numeric($item['afakulcs']) ? (double)$item['afakulcs'] : $item['afakulcs'],
-                            'taxValue' => (double)$item['afa'],
-                            'totalGrossPrice' => (double)$item['brutto']
+                            'name'            => $item['megnevezes'],
+                            'quantity'        => (double)$item['mennyiseg'],
+                            'quantityUnit'    => $item['mennyisegiEgyseg'],
+                            'netUnitPrice'    => (double)$item['nettoEgysegar'],
+                            'totalNetPrice'   => (double)$item['netto'],
+                            'taxRate'         => is_numeric($item['afakulcs']) ? (double)$item['afakulcs'] : $item['afakulcs'],
+                            'taxValue'        => (double)$item['afa'],
+                            'totalGrossPrice' => (double)$item['brutto'],
                         ];
                     })
                     ->toArray();
@@ -1510,8 +1561,8 @@ class Client
                     ->map(function ($payment) {
                         return [
                             'paymentMethod' => $this->getPaymentMethodByType(html_entity_decode($payment['fizetoeszkoz'])),
-                            'amount' => (float)$payment['osszeg'],
-                            'comment' => isset($payment['leiras']) ? $payment['leiras'] : null
+                            'amount'        => (float)$payment['osszeg'],
+                            'comment'       => isset($payment['leiras']) ? $payment['leiras'] : null,
                         ];
                     })
                     ->toArray();
@@ -1530,7 +1581,8 @@ class Client
                 );
             }
 
-        } catch (ParserException $exception) {
+        }
+        catch (ParserException $exception) {
             throw new ReceiptNotFoundException($receiptNumber);
         }
 

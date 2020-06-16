@@ -3,17 +3,20 @@
 
 namespace SzuniSoft\SzamlazzHu\Client\Models;
 
-use Nathanmac\Utilities\Parser\Exceptions\ParserException;
-use Nathanmac\Utilities\Parser\Parser;
 use Psr\Http\Message\ResponseInterface;
+use RuntimeException;
 use SzuniSoft\SzamlazzHu\Client\Client;
+use SzuniSoft\SzamlazzHu\Util\XmlParser;
 
 
 /**
  * Class CommonResponseModel
  * @package SzuniSoft\SzamlazzHu\Client\Models
  */
-abstract class CommonResponseModel {
+abstract class CommonResponseModel
+{
+
+    use XmlParser;
 
     protected static $noXml = false;
 
@@ -29,19 +32,21 @@ abstract class CommonResponseModel {
 
     /**
      * CommonResponseModel constructor.
-     * @param Client $client
+     *
+     * @param Client            $client
      * @param ResponseInterface $response
      */
     public function __construct(Client $client, ResponseInterface $response)
     {
-        $content = (string)$response->getBody();
+        $content      = (string)$response->getBody();
         $this->client = $client;
 
         try {
             $this->attributes = $this->mapAttributes(
-                static::$noXml ? $content : (new Parser)->xml($content)
+                static::$noXml ? $content : $this->parse($content)
             );
-        } catch (ParserException $e) {
+        }
+        catch (RuntimeException $e) {
 
         }
     }
@@ -56,6 +61,7 @@ abstract class CommonResponseModel {
 
     /**
      * @param $name
+     *
      * @return mixed|null
      */
     public function __get($name)
@@ -70,6 +76,7 @@ abstract class CommonResponseModel {
      * Maps remote attributes
      *
      * @param array|string $content
+     *
      * @return array
      */
     abstract protected function mapAttributes($content);
