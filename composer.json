@@ -21,11 +21,11 @@
     "ext-simplexml": "*",
     "ext-xmlwriter": "*",
     "guzzlehttp/guzzle": "6.*",
-    "laravel/framework": "7.*",
-    "orchestra/testbench": "5.*",
-    "phpunit/phpunit": "*"
+    "laravel/framework": ">5.6 | 6.* | 7.*"
   },
   "require-dev": {
+    "orchestra/testbench": "*",
+    "phpunit/phpunit": "*",
     "mockery/mockery": "^1.4"
   },
   "autoload": {
