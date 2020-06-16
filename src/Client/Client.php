@@ -213,12 +213,11 @@ class Client
     protected static function validateConfig(array $config)
     {
 
-        if (($validator = Validator::make($config, [
+        $rules = [
             'credentials.username' => 'required',
             'credentials.password' => 'required',
             'certificate.enabled'  => ['required', 'boolean'],
             'certificate'          => ['sometimes', 'array'],
-            'certificate.disk'     => ['required_if:certificate.enabled,1'],
             'certificate.path'     => [
                 'bail',
                 'required_if:certificate.enabled,1',
@@ -241,7 +240,13 @@ class Client
             ],
             'timeout'              => ['integer', 'min:10', 'max:300'],
             'base_uri'             => ['url'],
-        ]))->fails()) {
+        ];
+
+        if (isset($config['certificate'], $config['certificate']['enabled']) && !!$config['certificate']['enabled']) {
+            $rules[] = ['certificate.disk' => ['required']];
+        }
+
+        if (($validator = Validator::make($config, $rules))->fails()) {
             throw new InvalidClientConfigurationException($validator);
         }
     }
