@@ -84,7 +84,7 @@ use SzuniSoft\SzamlazzHu\Contracts\ArrayableCustomer;
 
 class ThisIsMyCustomerClass implements ArrayableCustomer {
 
-    public function toMerchantArray() {
+    public function toCustomerArray() {
         return [
             'name' => 'John Doe',
             'zipCode' => '1234',
