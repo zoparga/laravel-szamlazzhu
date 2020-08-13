@@ -18,6 +18,19 @@ class BootstrapTest extends TestCase
     }
 
     /** @test */
+    public function can_initialize_with_api_key_given_only()
+    {
+
+        new Client([
+            'credentials' => [
+                'api_key' => 'foo',
+            ]
+        ], $this->guzzle);
+
+        $this->assertTrue(true);
+    }
+
+    /** @test */
     function initializes_when_cert_specified_but_enabled()
     {
 

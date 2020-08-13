@@ -21,6 +21,7 @@ return [
          * Authentication credentials.
          * */
         'credentials' => [
+            'api_key' => env('SZAMLAZZ_HU_API_KEY'),
             'username' => env('SZAMLAZZ_HU_USERNAME'),
             'password' => env('SZAMLAZZ_HU_PASSWORD')
         ],

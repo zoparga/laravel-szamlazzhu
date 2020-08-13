@@ -214,8 +214,9 @@ class Client
     {
 
         $rules = [
-            'credentials.username' => 'required',
-            'credentials.password' => 'required',
+            'credentials.username' => 'required_without:credentials.api_key',
+            'credentials.password' => 'required_without:credentials.api_key',
+            'credentials.api_key'  => 'required_without:credentials.username',
             'certificate.enabled'  => ['required', 'boolean'],
             'certificate'          => ['sometimes', 'array'],
             'certificate.path'     => [
@@ -554,8 +555,16 @@ class Client
      */
     protected function writeCredentials(XMLWriter &$writer)
     {
-        $writer->writeElement('felhasznalo', $this->config['credentials']['username']);
-        $writer->writeElement('jelszo', $this->config['credentials']['password']);
+
+        if(isset($this->config['credentials']['api_key'])) {
+
+            $writer->writeElement('szamlaagentkulcs', $this->config['credentials']['api_key']);
+        }
+        else {
+
+            $writer->writeElement('felhasznalo', $this->config['credentials']['username']);
+            $writer->writeElement('jelszo', $this->config['credentials']['password']);
+        }
     }
 
     /**
