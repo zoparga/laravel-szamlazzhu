@@ -220,15 +220,15 @@ class Client
             'certificate.enabled'  => ['required', 'boolean'],
             'certificate'          => ['sometimes', 'array'],
             'certificate.path'     => [
-                'bail',
                 'required_if:certificate.enabled,1',
+                'bail',
                 'required_with_all:certificate.disk',
                 function ($attribute, $value, $fail) use (&$config) {
 
                     if (isset($config['certificate'])) {
                         $certificate = $config['certificate'];
 
-                        if (isset($certificate['disk'])) {
+                        if ($certificate['enabled'] && isset($certificate['disk'])) {
 
                             $disk = $config['certificate']['disk'];
                             if (!Storage::disk($disk)->exists($value)) {
