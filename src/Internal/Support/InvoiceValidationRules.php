@@ -7,7 +7,8 @@ namespace SzuniSoft\SzamlazzHu\Internal\Support;
 use Illuminate\Validation\Rule;
 use SzuniSoft\SzamlazzHu\Invoice;
 
-trait InvoiceValidationRules {
+trait InvoiceValidationRules
+{
 
     /**
      * @return array
@@ -15,7 +16,7 @@ trait InvoiceValidationRules {
     public function validationRulesForDeletingProformaInvoice()
     {
         return [
-            'invoiceNumber' => ['required', 'string']
+            'invoiceNumber' => ['required', 'string'],
         ];
     }
 
@@ -26,8 +27,8 @@ trait InvoiceValidationRules {
     {
         return [
             // The invoice is electric
-            'isElectronic' => ['required', 'boolean'],
-            'invoiceNumber' => ['required', 'string'],
+            'isElectronic'              => ['required', 'boolean'],
+            'invoiceNumber'             => ['required', 'string'],
 
             /* ----------------------------------------------------------
              * Merchant fields
@@ -37,7 +38,7 @@ trait InvoiceValidationRules {
             /* ----------------------------------------------------------
              * Customer fields
              * -------------------------------------------------------- */
-            'customerEmail' => ['email'],
+            'customerEmail'             => ['email'],
         ];
     }
 
@@ -48,81 +49,81 @@ trait InvoiceValidationRules {
     {
         return [
             // The invoice is electronic
-            'isElectronic' => ['required', 'boolean'],
+            'isElectronic'    => ['required', 'boolean'],
             // Comment must be present even if it is empty
-            'comment' => ['string'],
+            'comment'         => ['string'],
             // The language of invoice (and email)
             'invoiceLanguage' => ['required', Rule::in(Invoice::$supportedLanguages)],
             // Currency used in invoice. Make sure all related prices, costs appear in the specified currency
-            'currency' => ['required'],
+            'currency'        => ['required'],
             // Datetime fields
-            'createdAt' => ['required', 'date'],
-            'fulfillmentAt' => ['required', 'date'],
+            'createdAt'       => ['required', 'date'],
+            'fulfillmentAt'   => ['required', 'date'],
             'paymentDeadline' => ['required', 'date'],
             // Payment method | only allowed
-            'paymentMethod' => ['required', Rule::in($this->paymentMethods())],
+            'paymentMethod'   => ['required', Rule::in($this->paymentMethods())],
 
             // Invoice is prefixed
-            'invoicePrefix' => ['string'],
+            'invoicePrefix'   => ['string'],
 
             // This is usually the locally stored incremental identifier of order.
             // It is important to be specified because the common invoice can be
             // obtained from proforma invoice only if it is specified.
-            'orderNumber' => ['required', 'alpha_num'],
+            'orderNumber'     => ['required', 'alpha_num'],
 
-            'isImprestInvoice' => ['required', 'boolean'],
-            'isFinalInvoice' => ['required', 'boolean'],
-            'isReplacementInvoice' => ['required', 'boolean'],
-            'isPrepaymentRequest' => ['required', 'boolean'],
+            'isImprestInvoice'          => ['required', 'boolean'],
+            'isFinalInvoice'            => ['required', 'boolean'],
+            'isReplacementInvoice'      => ['required', 'boolean'],
+            'isPrepaymentRequest'       => ['required', 'boolean'],
 
             /*
              * Exchange rate bank required if the currency differs from HUF
              * */
-            'exchangeRateBank' => ['required_unless:currency,Ft,currency,HUF'],
+            'exchangeRateBank'          => ['required_unless:currency,Ft,currency,HUF'],
 
             /*
              * Exchange rate is required if the currency differs from HUF
              * */
             'exchangeRate' => [
-                'required_unless:exchangeRateBank,MNB,currency,Ft,currency,HUF',
+                'required_unless:currency,Ft,currency,HUF',
             ],
 
             /* ----------------------------------------------------------
              * Merchant fields
              * -------------------------------------------------------- */
-            'merchantBank' => ['required', 'string'],
-            'merchantBankAccountNumber' => ['required', 'string'],
-            'merchantReplyEmailAddress' => ['email'],
+            'merchantBank'              => ['nullable'],
+            'merchantBankAccountNumber' => ['nullable', 'string'],
+            'merchantReplyEmailAddress' => ['nullable', 'email'],
 
             /* ----------------------------------------------------------
              * Customer fields
              * -------------------------------------------------------- */
-            'customerName' => ['required', 'string', 'max:255'],
-            'customerZipCode' => ['required', 'string', 'max:255'],
-            'customerCity' => ['required', 'string', 'max:255'],
-            'customerAddress' => ['required', 'string', 'max:255'],
-            'customerEmail' => ['email'],
-            'customerReceivesEmail' => ['boolean'],
-            'customerTaxNumber' => ['string', 'alpha_dash', 'nullable'],
-            'customerShippingName' => ['string', 'max:255'],
-            'customerShippingZipCode' => ['string', 'max:255'],
-            'customerShippingCity' => ['string', 'max:255'],
-            'customerShippingAddress' => ['string', 'max:255'],
+            'customerName'              => ['required', 'string', 'max:255'],
+            'customerZipCode'           => ['required', 'string', 'max:255'],
+            'customerCity'              => ['required', 'string', 'max:255'],
+            'customerAddress'           => ['required', 'string', 'max:255'],
+            'customerEmail'             => ['email'],
+            'customerReceivesEmail'     => ['boolean'],
+            'customerTaxNumber'         => ['string', 'alpha_dash', 'nullable'],
+            'customerShippingName'      => ['string', 'max:255'],
+            'customerShippingZipCode'   => ['string', 'max:255'],
+            'customerShippingCity'      => ['string', 'max:255'],
+            'customerShippingAddress'   => ['string', 'max:255'],
 
             /* ----------------------------------------------------------
              * Items contained by the invoice
              * -------------------------------------------------------- */
-            'items' => ['required', 'array', 'min:1'],
-            'items.*.name' => ['required', 'string'],
-            'items.*.quantity' => ['required', 'integer', 'min:1'],
-            'items.*.quantityUnit' => ['required', 'string'],
-            'items.*.netUnitPrice' => ['required', 'numeric'],
-            'items.*.taxRate' => ['required'],
-            'items.*.id' => ['sometimes'],
-            'items.*.taxValue' => ['numeric'],
-            'items.*.totalGrossPrice' => ['numeric'],
-            'items.*.totalNetPrice' => ['numeric'],
-            'items.*.comment' => ['sometimes', 'string']
+            'items'                     => ['required', 'array', 'min:1'],
+            'items.*.name'              => ['required', 'string'],
+            'items.*.quantity'          => ['required', 'integer', 'min:1'],
+            'items.*.quantityUnit'      => ['required', 'string'],
+            'items.*.netUnitPrice'      => ['required', 'numeric'],
+            'items.*.taxRate'           => ['required'],
+            'items.*.id'                => ['sometimes'],
+            'items.*.taxValue'          => ['numeric'],
+            'items.*.totalGrossPrice'   => ['numeric'],
+            'items.*.totalNetPrice'     => ['numeric'],
+            'items.*.comment'           => ['sometimes', 'string'],
         ];
     }
 
