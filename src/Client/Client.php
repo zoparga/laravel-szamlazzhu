@@ -244,7 +244,7 @@ class Client
         ];
 
         if (isset($config['certificate'], $config['certificate']['enabled']) && !!$config['certificate']['enabled']) {
-            $rules[] = ['certificate.disk' => ['required']];
+            $rules['certificate.disk'] = ['required'];
         }
 
         if (($validator = Validator::make($config, $rules))->fails()) {
