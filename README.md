@@ -6,9 +6,14 @@
 # laravel-szamlazzhu
 Implementation for Laravel which was made to support Szamlazz.hu Agent version of **3.4** and higher.
 
+# Based on SzuniSOFT / laravel-szamlazzhu
+### https://github.com/SzuniSOFT/laravel-szamlazzhu
+### composer require szunisoft/laravel-szamlazzhu
+
+
 ## Installation
 ```bash
-composer require szunisoft/laravel-szamlazzhu
+composer require zoparga/laravel-szamlazzhu
 ```
 
 ## Introduction
