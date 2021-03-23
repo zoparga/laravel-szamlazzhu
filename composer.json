@@ -21,7 +21,7 @@
     "ext-simplexml": "*",
     "ext-xmlwriter": "*",
     "guzzlehttp/guzzle": "6.* | 7.*",
-    "laravel/framework": ">5.6 | 6.* | 7.* | 8.*"
+    "laravel/framework": " 6.* | 7.* | 8.*"
   },
   "require-dev": {
     "orchestra/testbench": "*",
@@ -45,7 +45,7 @@
   },
   "extra": {
     "branch-alias": {
-      "dev-master": "master-dev"
+      "dev-master": "1.0-dev"
     },
     "laravel": {
       "aliases": {
