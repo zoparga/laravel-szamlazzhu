@@ -1,12 +1,12 @@
 <?php
 
 
-namespace SzuniSoft\SzamlazzHu\Client\ApiErrors;
+namespace zoparga\SzamlazzHu\Client\ApiErrors;
 
 
 /**
  * Class InvalidNetPriceValueException
- * @package SzuniSoft\SzamlazzHu\Client\ApiErrors
+ * @package zoparga\SzamlazzHu\Client\ApiErrors
  */
 class InvalidNetPriceValueException extends ClientException
 {

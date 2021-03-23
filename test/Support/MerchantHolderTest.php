@@ -1,12 +1,12 @@
 <?php
 
 
-namespace SzuniSoft\SzamlazzHu\Tests\Support;
+namespace zoparga\SzamlazzHu\Tests\Support;
 
 
 use Orchestra\Testbench\TestCase;
-use SzuniSoft\SzamlazzHu\Tests\Fixtures\Merchant;
-use SzuniSoft\SzamlazzHu\Tests\Fixtures\MerchantHolder;
+use zoparga\SzamlazzHu\Tests\Fixtures\Merchant;
+use zoparga\SzamlazzHu\Tests\Fixtures\MerchantHolder;
 
 class MerchantHolderTest extends TestCase {
 

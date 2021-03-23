@@ -1,7 +1,7 @@
 <?php
 
 
-namespace SzuniSoft\SzamlazzHu\Contracts;
+namespace zoparga\SzamlazzHu\Contracts;
 
 
 interface ArrayableCustomer

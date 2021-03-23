@@ -1,12 +1,12 @@
 <?php
 
 
-namespace SzuniSoft\SzamlazzHu\Client\ApiErrors;
+namespace zoparga\SzamlazzHu\Client\ApiErrors;
 
 
 /**
  * Class KeystoreOpeningException
- * @package SzuniSoft\SzamlazzHu\Client\ApiErrors
+ * @package zoparga\SzamlazzHu\Client\ApiErrors
  *
  * Request could not open the keystore.
  */

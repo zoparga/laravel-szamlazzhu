@@ -1,7 +1,7 @@
 <?php
 
 
-namespace SzuniSoft\SzamlazzHu\Client;
+namespace zoparga\SzamlazzHu\Client;
 
 
 use Carbon\Carbon;
@@ -14,44 +14,45 @@ use Illuminate\Support\Str;
 use InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface;
 use RuntimeException;
-use SzuniSoft\SzamlazzHu\Client\ApiErrors\AuthenticationException;
-use SzuniSoft\SzamlazzHu\Client\ApiErrors\CannotCreateInvoiceException;
-use SzuniSoft\SzamlazzHu\Client\ApiErrors\CommonResponseException;
-use SzuniSoft\SzamlazzHu\Client\ApiErrors\InvalidGrossPriceValueException;
-use SzuniSoft\SzamlazzHu\Client\ApiErrors\InvalidInvoicePrefixException;
-use SzuniSoft\SzamlazzHu\Client\ApiErrors\InvalidNetPriceValueException;
-use SzuniSoft\SzamlazzHu\Client\ApiErrors\InvalidVatRateValueException;
-use SzuniSoft\SzamlazzHu\Client\ApiErrors\InvoiceNotificationSendingException;
-use SzuniSoft\SzamlazzHu\Client\ApiErrors\KeystoreOpeningException;
-use SzuniSoft\SzamlazzHu\Client\ApiErrors\NoXmlFileException;
-use SzuniSoft\SzamlazzHu\Client\ApiErrors\ReceiptAlreadyExistsException;
-use SzuniSoft\SzamlazzHu\Client\ApiErrors\ReceiptNotFoundException;
-use SzuniSoft\SzamlazzHu\Client\ApiErrors\RemoteMaintenanceException;
-use SzuniSoft\SzamlazzHu\Client\ApiErrors\UnsuccessfulInvoiceSignatureException;
-use SzuniSoft\SzamlazzHu\Client\ApiErrors\XmlReadingException;
-use SzuniSoft\SzamlazzHu\Client\Errors\InvalidClientConfigurationException;
-use SzuniSoft\SzamlazzHu\Client\Errors\InvoiceNotFoundException;
-use SzuniSoft\SzamlazzHu\Client\Errors\InvoiceValidationException;
-use SzuniSoft\SzamlazzHu\Client\Errors\ModelValidationException;
-use SzuniSoft\SzamlazzHu\Client\Errors\ReceiptValidationException;
-use SzuniSoft\SzamlazzHu\Client\Models\InvoiceCancellationResponse;
-use SzuniSoft\SzamlazzHu\Client\Models\InvoiceCreationResponse;
-use SzuniSoft\SzamlazzHu\Client\Models\ProformaInvoiceDeletionResponse;
-use SzuniSoft\SzamlazzHu\Client\Models\ReceiptCancellationResponse;
-use SzuniSoft\SzamlazzHu\Client\Models\ReceiptCreationResponse;
-use SzuniSoft\SzamlazzHu\Contracts\ArrayableMerchant;
-use SzuniSoft\SzamlazzHu\Internal\AbstractInvoice;
-use SzuniSoft\SzamlazzHu\Internal\AbstractModel;
-use SzuniSoft\SzamlazzHu\Internal\Support\ClientAccessor;
-use SzuniSoft\SzamlazzHu\Internal\Support\InvoiceValidationRules;
-use SzuniSoft\SzamlazzHu\Internal\Support\MerchantHolder;
-use SzuniSoft\SzamlazzHu\Internal\Support\NormalizeParsedNumericArrays;
-use SzuniSoft\SzamlazzHu\Internal\Support\PaymentMethods;
-use SzuniSoft\SzamlazzHu\Internal\Support\ReceiptValidationRules;
-use SzuniSoft\SzamlazzHu\Invoice;
-use SzuniSoft\SzamlazzHu\ProformaInvoice;
-use SzuniSoft\SzamlazzHu\Receipt;
-use SzuniSoft\SzamlazzHu\Util\XmlParser;
+use SebastianBergmann\CodeCoverage\ParserException;
+use zoparga\SzamlazzHu\Client\ApiErrors\AuthenticationException;
+use zoparga\SzamlazzHu\Client\ApiErrors\CannotCreateInvoiceException;
+use zoparga\SzamlazzHu\Client\ApiErrors\CommonResponseException;
+use zoparga\SzamlazzHu\Client\ApiErrors\InvalidGrossPriceValueException;
+use zoparga\SzamlazzHu\Client\ApiErrors\InvalidInvoicePrefixException;
+use zoparga\SzamlazzHu\Client\ApiErrors\InvalidNetPriceValueException;
+use zoparga\SzamlazzHu\Client\ApiErrors\InvalidVatRateValueException;
+use zoparga\SzamlazzHu\Client\ApiErrors\InvoiceNotificationSendingException;
+use zoparga\SzamlazzHu\Client\ApiErrors\KeystoreOpeningException;
+use zoparga\SzamlazzHu\Client\ApiErrors\NoXmlFileException;
+use zoparga\SzamlazzHu\Client\ApiErrors\ReceiptAlreadyExistsException;
+use zoparga\SzamlazzHu\Client\ApiErrors\ReceiptNotFoundException;
+use zoparga\SzamlazzHu\Client\ApiErrors\RemoteMaintenanceException;
+use zoparga\SzamlazzHu\Client\ApiErrors\UnsuccessfulInvoiceSignatureException;
+use zoparga\SzamlazzHu\Client\ApiErrors\XmlReadingException;
+use zoparga\SzamlazzHu\Client\Errors\InvalidClientConfigurationException;
+use zoparga\SzamlazzHu\Client\Errors\InvoiceNotFoundException;
+use zoparga\SzamlazzHu\Client\Errors\InvoiceValidationException;
+use zoparga\SzamlazzHu\Client\Errors\ModelValidationException;
+use zoparga\SzamlazzHu\Client\Errors\ReceiptValidationException;
+use zoparga\SzamlazzHu\Client\Models\InvoiceCancellationResponse;
+use zoparga\SzamlazzHu\Client\Models\InvoiceCreationResponse;
+use zoparga\SzamlazzHu\Client\Models\ProformaInvoiceDeletionResponse;
+use zoparga\SzamlazzHu\Client\Models\ReceiptCancellationResponse;
+use zoparga\SzamlazzHu\Client\Models\ReceiptCreationResponse;
+use zoparga\SzamlazzHu\Contracts\ArrayableMerchant;
+use zoparga\SzamlazzHu\Internal\AbstractInvoice;
+use zoparga\SzamlazzHu\Internal\AbstractModel;
+use zoparga\SzamlazzHu\Internal\Support\ClientAccessor;
+use zoparga\SzamlazzHu\Internal\Support\InvoiceValidationRules;
+use zoparga\SzamlazzHu\Internal\Support\MerchantHolder;
+use zoparga\SzamlazzHu\Internal\Support\NormalizeParsedNumericArrays;
+use zoparga\SzamlazzHu\Internal\Support\PaymentMethods;
+use zoparga\SzamlazzHu\Internal\Support\ReceiptValidationRules;
+use zoparga\SzamlazzHu\Invoice;
+use zoparga\SzamlazzHu\ProformaInvoice;
+use zoparga\SzamlazzHu\Receipt;
+use zoparga\SzamlazzHu\Util\XmlParser;
 use XMLWriter;
 
 class Client
@@ -670,7 +671,7 @@ class Client
      * @param null    $emailMessage
      *
      * @return InvoiceCreationResponse
-     * @throws \SzuniSoft\SzamlazzHu\Client\Errors\ModelValidationException
+     * @throws \zoparga\SzamlazzHu\Client\Errors\ModelValidationException
      */
     public function uploadInvoice(Invoice $invoice, $withoutPdf = false, $emailSubject = null, $emailMessage = null)
     {

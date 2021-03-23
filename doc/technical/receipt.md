@@ -1,22 +1,22 @@
 # Receipts
-Class accessible as **_SzuniSoft\SzamlazzHu\Receipt_**
+Class accessible as **_zoparga\SzamlazzHu\Receipt_**
 
 ## Contract types
 
 Contract | Namespace
 --- | ---
-ArrayableItem | SzuniSoft\SzamlazzHu\Contracts\ArrayableItem
-ArrayableItemCollection | SzuniSoft\SzamlazzHu\Contracts\ArrayableItemCollection
-ArrayablePayment | SzuniSoft\SzamlazzHu\Contracts\ArrayablePayment
-ArrayablePaymentCollection | SzuniSoft\SzamlazzHu\Contracts\ArrayablePaymentCollection
+ArrayableItem | zoparga\SzamlazzHu\Contracts\ArrayableItem
+ArrayableItemCollection | zoparga\SzamlazzHu\Contracts\ArrayableItemCollection
+ArrayablePayment | zoparga\SzamlazzHu\Contracts\ArrayablePayment
+ArrayablePaymentCollection | zoparga\SzamlazzHu\Contracts\ArrayablePaymentCollection
 
 ## Initialize receipt
 
 Receipt needs to have **at least** one **item** and **payment**.
 
 ```php
-use SzuniSoft\SzamlazzHu\Receipt;
-use SzuniSoft\SzamlazzHu\Internal\Support\PaymentMethods;
+use zoparga\SzamlazzHu\Receipt;
+use zoparga\SzamlazzHu\Internal\Support\PaymentMethods;
 
 $receipt = new Receipt();
 
@@ -66,7 +66,7 @@ $receipt->addItem([
 You may add items as classes that implements ArrayableItem contract
 
 ```php
-use SzuniSoft\SzamlazzHu\Contracts\ArrayableItem;
+use zoparga\SzamlazzHu\Contracts\ArrayableItem;
 
 class ThisIsMyProductClass implements ArrayableItem {
 
@@ -90,7 +90,7 @@ $receipt->addItems($thisIsMyProduct);
 #### Add multiple items at once via ArrayableItemCollection
 Method needs to return with items wrapped in array or **_ArrayableItem_** contracts in an array.
 ```php
-use SzuniSoft\SzamlazzHu\Contracts\ArrayableItemCollection;
+use zoparga\SzamlazzHu\Contracts\ArrayableItemCollection;
 
 class Cart implemenst ArrayableItemCollection {
 
@@ -132,7 +132,7 @@ $receipt->addPayment([
 You may add payments as classes that implements ArrayablePayment contract
 
 ```php
-use SzuniSoft\SzamlazzHu\Contracts\ArrayableItem;
+use zoparga\SzamlazzHu\Contracts\ArrayableItem;
 
 class ThisIsMyPaymentClass implements ArrayableItem {
 
@@ -154,7 +154,7 @@ $receipt->addPayment($thisIsMyPayment);
 #### Add multiple payments at once via ArrayablePaymentCollection
 Method needs to return with payments wrapped in array or **_ArrayablePayment_** contracts in an array.
 ```php
-use SzuniSoft\SzamlazzHu\Contracts\ArrayablePaymentCollection;
+use zoparga\SzamlazzHu\Contracts\ArrayablePaymentCollection;
 
 class Payments implemenst ArrayablePaymentCollection {
 

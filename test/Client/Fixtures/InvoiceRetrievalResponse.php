@@ -1,7 +1,7 @@
 <?php
 
 
-namespace SzuniSoft\SzamlazzHu\Tests\Client\Fixtures;
+namespace zoparga\SzamlazzHu\Tests\Client\Fixtures;
 
 
 use GuzzleHttp\Psr7\Response;

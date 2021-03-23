@@ -1,18 +1,18 @@
 <?php
 
 
-namespace SzuniSoft\SzamlazzHu;
+namespace zoparga\SzamlazzHu;
 
-use SzuniSoft\SzamlazzHu\Client\Errors\InvoiceValidationException;
-use SzuniSoft\SzamlazzHu\Client\Errors\ModelValidationException;
-use SzuniSoft\SzamlazzHu\Client\Models\InvoiceCancellationResponse;
-use SzuniSoft\SzamlazzHu\Client\Models\InvoiceCreationResponse;
-use SzuniSoft\SzamlazzHu\Internal\AbstractInvoice;
-use SzuniSoft\SzamlazzHu\Internal\Support\ClientAccessor;
+use zoparga\SzamlazzHu\Client\Errors\InvoiceValidationException;
+use zoparga\SzamlazzHu\Client\Errors\ModelValidationException;
+use zoparga\SzamlazzHu\Client\Models\InvoiceCancellationResponse;
+use zoparga\SzamlazzHu\Client\Models\InvoiceCreationResponse;
+use zoparga\SzamlazzHu\Internal\AbstractInvoice;
+use zoparga\SzamlazzHu\Internal\Support\ClientAccessor;
 
 /**
  * Class Invoice
- * @package SzuniSoft\SzamlazzHu
+ * @package zoparga\SzamlazzHu
  */
 class Invoice extends AbstractInvoice {
 

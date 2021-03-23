@@ -1,7 +1,7 @@
 <?php
 
 
-namespace SzuniSoft\SzamlazzHu\Tests\Client\Fixtures;
+namespace zoparga\SzamlazzHu\Tests\Client\Fixtures;
 
 
 use GuzzleHttp\Psr7\Response;
@@ -16,23 +16,23 @@ class ReceiptCancellationResponse extends Response {
         $body = $body ?: '<?xml version="1.0" encoding="UTF-8"?>
                     <xmlnyugtavalasz xmlns="http://www.szamlazz.hu/xmlnyugtavalasz" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.szamlazz.hu/xmlnyugtavalasz http://www.szamlazz.hu/docs/xsds/nyugta/xmlnyugtavalasz.xsd">
                         <sikeres>true</sikeres>
-                        <hibakod></hibakod> 
+                        <hibakod></hibakod>
                         <hibauzenet></hibauzenet>
                         <nyugtaPdf>' . base64_encode($pdf) . '</nyugtaPdf>
                         <nyugta>
                             <alap>
                             <id>123456</id>
                             <hivasAzonosito></hivasAzonosito>
-                            <nyugtaszam>NYGT-2017-123</nyugtaszam> 
+                            <nyugtaszam>NYGT-2017-123</nyugtaszam>
                             <tipus>NY</tipus>
-                            <stornozott>false</stornozott> 
-                            <stornozottNyugtaszam>NYGT-2017-100</stornozottNyugtaszam> 
+                            <stornozott>false</stornozott>
+                            <stornozottNyugtaszam>NYGT-2017-100</stornozottNyugtaszam>
                             <kelt>2015-12-01</kelt>
                             <fizmod>készpénz</fizmod>
                             <penznem>EUR</penznem>
                             <devizabank></devizabank>
                             <devizaarf>210</devizaarf>
-                            <megjegyzes></megjegyzes> 
+                            <megjegyzes></megjegyzes>
                             <fokonyvVevo></fokonyvVevo>
                             <teszt>false</teszt>
                             </alap>
@@ -44,9 +44,9 @@ class ReceiptCancellationResponse extends Response {
                                     <mennyisegiEgyseg>piece</mennyisegiEgyseg>
                                     <nettoEgysegar>-10000</nettoEgysegar>
                                     <netto>-20000.0</netto>
-                                    <afakulcs>27</afakulcs> 
+                                    <afakulcs>27</afakulcs>
                                     <afa>-5400.0</afa>
-                                    <brutto>-25400.0</brutto> 
+                                    <brutto>-25400.0</brutto>
                                     <fokonyv>
                                         <arbevetel></arbevetel>
                                         <afa></afa>
@@ -75,12 +75,12 @@ class ReceiptCancellationResponse extends Response {
                                 </kifizetes>
                             </kifizetesek>
                             <osszegek>
-                                <afakulcsossz> 
+                                <afakulcsossz>
                                     <afatipus>ÁKK</afatipus>
-                                    <afakulcs>0</afakulcs> 
+                                    <afakulcs>0</afakulcs>
                                     <netto>200</netto>
                                     <afa>54</afa>
-                                    <brutto>254</brutto> 
+                                    <brutto>254</brutto>
                                 </afakulcsossz>
                                 <totalossz>
                                     <netto>200</netto>

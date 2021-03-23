@@ -1,13 +1,13 @@
 <?php
 
 
-namespace SzuniSoft\SzamlazzHu\Tests\Client\Invoice;
+namespace zoparga\SzamlazzHu\Tests\Client\Invoice;
 
 
-use SzuniSoft\SzamlazzHu\Client\Client;
-use SzuniSoft\SzamlazzHu\Invoice;
+use zoparga\SzamlazzHu\Client\Client;
+use zoparga\SzamlazzHu\Invoice;
 
-class TestCase extends \SzuniSoft\SzamlazzHu\Tests\Client\TestCase {
+class TestCase extends \zoparga\SzamlazzHu\Tests\Client\TestCase {
 
     /**
      * @param null $number

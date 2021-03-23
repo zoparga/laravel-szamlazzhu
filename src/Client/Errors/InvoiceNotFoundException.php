@@ -1,11 +1,11 @@
 <?php
 
 
-namespace SzuniSoft\SzamlazzHu\Client\Errors;
+namespace zoparga\SzamlazzHu\Client\Errors;
 
 
 use Exception;
-use SzuniSoft\SzamlazzHu\Internal\AbstractInvoice;
+use zoparga\SzamlazzHu\Internal\AbstractInvoice;
 
 class InvoiceNotFoundException extends Exception
 {

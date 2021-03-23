@@ -1,11 +1,11 @@
 <?php
 
 
-namespace SzuniSoft\SzamlazzHu\Providers;
+namespace zoparga\SzamlazzHu\Providers;
 
 
 use Illuminate\Support\ServiceProvider;
-use SzuniSoft\SzamlazzHu\Client\Client;
+use zoparga\SzamlazzHu\Client\Client;
 
 class SzamlazzHuServiceProvider extends ServiceProvider
 {

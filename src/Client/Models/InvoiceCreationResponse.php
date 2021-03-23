@@ -1,14 +1,14 @@
 <?php
 
 
-namespace SzuniSoft\SzamlazzHu\Client\Models;
+namespace zoparga\SzamlazzHu\Client\Models;
 
-use SzuniSoft\SzamlazzHu\Client\Client;
+use zoparga\SzamlazzHu\Client\Client;
 
 
 /**
  * Class Invoice
- * @package SzuniSoft\SzamlazzHu\Client\Models
+ * @package zoparga\SzamlazzHu\Client\Models
  *
  * [Attributes]
  * @property-read string $invoiceNumber

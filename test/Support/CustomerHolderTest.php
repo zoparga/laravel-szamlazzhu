@@ -1,13 +1,13 @@
 <?php
 
 
-namespace SzuniSoft\SzamlazzHu\Tests\Support;
+namespace zoparga\SzamlazzHu\Tests\Support;
 
 
 use Orchestra\Testbench\TestCase;
 use function PHPSTORM_META\type;
-use SzuniSoft\SzamlazzHu\Tests\Fixtures\Customer;
-use SzuniSoft\SzamlazzHu\Tests\Fixtures\CustomerHolder;
+use zoparga\SzamlazzHu\Tests\Fixtures\Customer;
+use zoparga\SzamlazzHu\Tests\Fixtures\CustomerHolder;
 
 class CustomerHolderTest extends TestCase {
 

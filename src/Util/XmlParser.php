@@ -1,7 +1,7 @@
 <?php
 
 
-namespace SzuniSoft\SzamlazzHu\Util;
+namespace zoparga\SzamlazzHu\Util;
 
 
 use RuntimeException;
@@ -87,5 +87,5 @@ trait XmlParser
 
         return $result;
     }
-    
+
 }

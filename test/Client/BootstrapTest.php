@@ -1,10 +1,10 @@
 <?php
 
-namespace SzuniSoft\SzamlazzHu\Tests\Client;
+namespace zoparga\SzamlazzHu\Tests\Client;
 
 
-use SzuniSoft\SzamlazzHu\Client\Client;
-use SzuniSoft\SzamlazzHu\Client\Errors\InvalidClientConfigurationException;
+use zoparga\SzamlazzHu\Client\Client;
+use zoparga\SzamlazzHu\Client\Errors\InvalidClientConfigurationException;
 
 class BootstrapTest extends TestCase
 {

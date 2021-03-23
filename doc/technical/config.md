@@ -2,7 +2,7 @@
 
 To export and override defaults please use the following command.
 ```bash
-php artisan vendor:publish --provider="SzuniSoft\SzamlazzHu\Providers\SzamlazzHuServiceProvider" --tag="config"
+php artisan vendor:publish --provider="zoparga\SzamlazzHu\Providers\SzamlazzHuServiceProvider" --tag="config"
 ```
 
 ## Sample

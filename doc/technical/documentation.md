@@ -7,7 +7,7 @@ Check out configuration [documentation](config.md)
 The client is accessible the following ways:
 ```php
 // Resolve by class
-$client = app(\SzuniSoft\SzamlazzHu\Client\Client::class);
+$client = app(\zoparga\SzamlazzHu\Client\Client::class);
 
 // Resolve by alias
 $client = app('szamlazz-hu.client');

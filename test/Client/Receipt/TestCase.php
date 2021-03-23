@@ -1,14 +1,14 @@
 <?php
 
 
-namespace SzuniSoft\SzamlazzHu\Tests\Client\Receipt;
+namespace zoparga\SzamlazzHu\Tests\Client\Receipt;
 
 
-use SzuniSoft\SzamlazzHu\Client\Client;
-use SzuniSoft\SzamlazzHu\Internal\Support\PaymentMethods;
-use SzuniSoft\SzamlazzHu\Receipt;
+use zoparga\SzamlazzHu\Client\Client;
+use zoparga\SzamlazzHu\Internal\Support\PaymentMethods;
+use zoparga\SzamlazzHu\Receipt;
 
-class TestCase extends \SzuniSoft\SzamlazzHu\Tests\Client\TestCase {
+class TestCase extends \zoparga\SzamlazzHu\Tests\Client\TestCase {
 
     /**
      * @param int $orderNumber

@@ -1,11 +1,11 @@
 <?php
 
 
-namespace SzuniSoft\SzamlazzHu\Tests\Fixtures;
+namespace zoparga\SzamlazzHu\Tests\Fixtures;
 
 
 class MerchantHolder {
 
-    use \SzuniSoft\SzamlazzHu\Internal\Support\MerchantHolder;
+    use \zoparga\SzamlazzHu\Internal\Support\MerchantHolder;
 
 }

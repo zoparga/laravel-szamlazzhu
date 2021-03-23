@@ -1,5 +1,5 @@
 {
-  "name": "szunisoft/laravel-szamlazzhu",
+  "name": "zoparga/laravel-szamlazzhu",
   "license": "MIT",
   "description": "Szamlazz.hu integration for Laravel",
   "keywords": [
@@ -32,12 +32,12 @@
     "files": [
     ],
     "psr-4": {
-      "SzuniSoft\\SzamlazzHu\\": "src/"
+      "zoparga\\SzamlazzHu\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "SzuniSoft\\SzamlazzHu\\Tests\\": "test/"
+      "zoparga\\SzamlazzHu\\Tests\\": "test/"
     }
   },
   "suggest": {
@@ -51,7 +51,7 @@
       "aliases": {
       },
       "providers": [
-        "SzuniSoft\\SzamlazzHu\\Providers\\SzamlazzHuServiceProvider"
+        "zoparga\\SzamlazzHu\\Providers\\SzamlazzHuServiceProvider"
       ]
     }
   },

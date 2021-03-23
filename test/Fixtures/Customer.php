@@ -1,10 +1,10 @@
 <?php
 
 
-namespace SzuniSoft\SzamlazzHu\Tests\Fixtures;
+namespace zoparga\SzamlazzHu\Tests\Fixtures;
 
 
-use SzuniSoft\SzamlazzHu\Contracts\ArrayableCustomer;
+use zoparga\SzamlazzHu\Contracts\ArrayableCustomer;
 
 class Customer implements ArrayableCustomer {
     protected $name;

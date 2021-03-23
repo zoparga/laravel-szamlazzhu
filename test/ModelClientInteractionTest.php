@@ -1,15 +1,15 @@
 <?php
 
 
-namespace SzuniSoft\SzamlazzHu\Tests;
+namespace zoparga\SzamlazzHu\Tests;
 
 
 use Mockery;
-use SzuniSoft\SzamlazzHu\Client\Client;
-use SzuniSoft\SzamlazzHu\Client\Models\ReceiptCancellationResponse;
-use SzuniSoft\SzamlazzHu\Invoice;
-use SzuniSoft\SzamlazzHu\ProformaInvoice;
-use SzuniSoft\SzamlazzHu\Receipt;
+use zoparga\SzamlazzHu\Client\Client;
+use zoparga\SzamlazzHu\Client\Models\ReceiptCancellationResponse;
+use zoparga\SzamlazzHu\Invoice;
+use zoparga\SzamlazzHu\ProformaInvoice;
+use zoparga\SzamlazzHu\Receipt;
 
 class ModelClientInteractionTest extends \Orchestra\Testbench\TestCase {
 
@@ -232,7 +232,7 @@ class ModelClientInteractionTest extends \Orchestra\Testbench\TestCase {
     {
         $receipt = $this->createReceipt();
 
-        $apiResponse = new \SzuniSoft\SzamlazzHu\Tests\Client\Fixtures\ReceiptCancellationResponse();
+        $apiResponse = new \zoparga\SzamlazzHu\Tests\Client\Fixtures\ReceiptCancellationResponse();
 
         $response = new ReceiptCancellationResponse(
             $receipt,
@@ -253,7 +253,7 @@ class ModelClientInteractionTest extends \Orchestra\Testbench\TestCase {
     {
         $receipt = $this->createReceipt();
 
-        $apiResponse = new \SzuniSoft\SzamlazzHu\Tests\Client\Fixtures\ReceiptCancellationResponse();
+        $apiResponse = new \zoparga\SzamlazzHu\Tests\Client\Fixtures\ReceiptCancellationResponse();
 
         $response = new ReceiptCancellationResponse(
             $receipt,

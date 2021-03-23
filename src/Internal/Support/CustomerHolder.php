@@ -1,15 +1,15 @@
 <?php
 
 
-namespace SzuniSoft\SzamlazzHu\Internal\Support;
+namespace zoparga\SzamlazzHu\Internal\Support;
 
 use Illuminate\Support\Str;
 use InvalidArgumentException;
-use SzuniSoft\SzamlazzHu\Contracts\ArrayableCustomer;
+use zoparga\SzamlazzHu\Contracts\ArrayableCustomer;
 
 /**
  * Trait SimplifiesCustomer
- * @package SzuniSoft\SzamlazzHu\Support
+ * @package zoparga\SzamlazzHu\Support
  *
  * [Attributes]
  * @property-read string $customerEmail

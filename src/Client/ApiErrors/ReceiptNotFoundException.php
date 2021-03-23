@@ -1,10 +1,10 @@
 <?php
 
-namespace SzuniSoft\SzamlazzHu\Client\ApiErrors;
+namespace zoparga\SzamlazzHu\Client\ApiErrors;
 
 
 use Exception;
-use SzuniSoft\SzamlazzHu\Receipt;
+use zoparga\SzamlazzHu\Receipt;
 use Throwable;
 
 class ReceiptNotFoundException extends Exception {
