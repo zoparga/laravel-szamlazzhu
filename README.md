@@ -6,9 +6,14 @@
 # laravel-szamlazzhu
 Implementation for Laravel which was made to support Szamlazz.hu Agent version of **3.4** and higher.
 
-# Based on zoparga / laravel-szamlazzhu
-### https://github.com/zoparga/laravel-szamlazzhu
-### composer require zoparga/laravel-szamlazzhu
+# Original
+## Based on SzuniSOFT / laravel-szamlazzhu
+### https://github.com/SzuniSOFT/laravel-szamlazzhu
+composer require SzuniSOFT/laravel-szamlazzhu
+
+I copied & published this package, because I needed Laravel 8 support, 
+which is require GuzzleHttp 7 & the maintainers don't want to add it yet.
+
 
 
 ## Installation
