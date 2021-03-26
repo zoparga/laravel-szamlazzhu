@@ -85,7 +85,7 @@ trait InvoiceValidationRules
              * Exchange rate is required if the currency differs from HUF
              * */
             'exchangeRate' => [
-                'required_unless:currency,Ft,currency,HUF',
+                'required_unless:exchangeRateBank,MNB,currency,Ft,currency,HUF',
             ],
 
             /* ----------------------------------------------------------
