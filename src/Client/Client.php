@@ -1210,7 +1210,7 @@ class Client
             // Customer fields
             $customer = [
                 'customerName'      => html_entity_decode($xml['vevo']['nev']),
-                'customerCountry'   => html_entity_decode($xml['vevo']['cim']['orszag']),
+                'customerCountry'   => html_entity_decode($xml['vevo']['cim']['orszag'] ?? ''),
                 'customerZipCode'   => $xml['vevo']['cim']['irsz'],
                 'customerCity'      => html_entity_decode($xml['vevo']['cim']['telepules']),
                 'customerAddress'   => $xml['vevo']['cim']['cim'],
