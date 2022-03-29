@@ -961,7 +961,7 @@ class Client
                 {
                     $this->writeCredentials($writer);
                     $writer->writeElement('eszamla', $this->stringifyBoolean($invoice->isElectronic));
-                    $writer->writeElement('kulcstartojelszo', '');
+                    //$writer->writeElement('kulcstartojelszo', '');
                     $writer->writeElement('szamlaLetoltes', $this->stringifyBoolean(false));
                     $writer->writeElement('szamlaLetoltesPld', 1);
                 }
@@ -1021,7 +1021,7 @@ class Client
                     {
                         $this->writeCredentials($writer);
                         $writer->writeElement('eszamla', $this->stringifyBoolean($invoice->isElectronic));
-                        $writer->writeElement('kulcstartojelszo', '');
+                        // $writer->writeElement('kulcstartojelszo', '');
                         $writer->writeElement('szamlaLetoltes', $this->stringifyBoolean(true));
                         $writer->writeElement('szamlaLetoltesPld', 1);
                     }
