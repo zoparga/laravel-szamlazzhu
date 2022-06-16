@@ -55,7 +55,7 @@ trait InvoiceValidationRules
             // The language of invoice (and email)
             'invoiceLanguage' => ['required', Rule::in(Invoice::$supportedLanguages)],
             // Currency used in invoice. Make sure all related prices, costs appear in the specified currency
-            'currency'        => ['required'],
+            'currency'        => ['required', 'string'],
             // Datetime fields
             'createdAt'       => ['required', 'date'],
             'fulfillmentAt'   => ['required', 'date'],
@@ -69,7 +69,7 @@ trait InvoiceValidationRules
             // This is usually the locally stored incremental identifier of order.
             // It is important to be specified because the common invoice can be
             // obtained from proforma invoice only if it is specified.
-            'orderNumber'     => ['required', 'alpha_num'],
+            'orderNumber'     => ['required', 'alpha_dash'],
 
             'isImprestInvoice'          => ['required', 'boolean'],
             'isFinalInvoice'            => ['required', 'boolean'],
@@ -117,7 +117,7 @@ trait InvoiceValidationRules
              * -------------------------------------------------------- */
             'items'                     => ['required', 'array', 'min:1'],
             'items.*.name'              => ['required', 'string'],
-            'items.*.quantity'          => ['required', 'integer', 'min:1'],
+            'items.*.quantity'          => ['required', 'numeric', 'min:1'],
             'items.*.quantityUnit'      => ['required', 'string'],
             'items.*.netUnitPrice'      => ['required', 'numeric'],
             'items.*.taxRate'           => ['required'],
