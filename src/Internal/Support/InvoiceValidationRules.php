@@ -99,6 +99,7 @@ trait InvoiceValidationRules
              * Customer fields
              * -------------------------------------------------------- */
             'customerName'              => ['required', 'string', 'max:255'],
+            'customerCountry'           => ['string', 'max:255'],
             'customerZipCode'           => ['required', 'string', 'max:255'],
             'customerCity'              => ['required', 'string', 'max:255'],
             'customerAddress'           => ['required', 'string', 'max:255'],
@@ -106,6 +107,7 @@ trait InvoiceValidationRules
             'customerReceivesEmail'     => ['boolean'],
             'customerTaxNumber'         => ['string', 'alpha_dash', 'nullable'],
             'customerShippingName'      => ['string', 'max:255'],
+            'customerShippingCountry'   => ['string', 'max:255'],
             'customerShippingZipCode'   => ['string', 'max:255'],
             'customerShippingCity'      => ['string', 'max:255'],
             'customerShippingAddress'   => ['string', 'max:255'],
