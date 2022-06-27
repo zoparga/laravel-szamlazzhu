@@ -11,7 +11,7 @@ Implementation for Laravel which was made to support Szamlazz.hu Agent version o
 ### https://github.com/SzuniSOFT/laravel-szamlazzhu
 composer require SzuniSOFT/laravel-szamlazzhu
 
-I copied & published this package, because I needed Laravel 8 support, 
+I copied & published this package, because I needed Laravel 8 / 9 support, 
 which is require GuzzleHttp 7 & the maintainers don't want to add it yet.
 
 
@@ -34,7 +34,7 @@ This package supports the following methods:
 Package can automatically save generated PDF files and store on the given disk. For further information about the configuration possibilities please refer to the [configuration](doc/technical/config.md) documentation.
 
 ## Requirements
-Supports Laravel: **5.5** / **6.*** / **7.*** / **8.***
+Supports Laravel: **5.5** / **6.*** / **7.*** / **8.*** / **9.***
 
 ## Documentations
 For usage please refer to the [technical documentation](doc/technical/documentation.md).
