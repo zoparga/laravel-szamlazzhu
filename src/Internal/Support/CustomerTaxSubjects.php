@@ -5,7 +5,7 @@ namespace zoparga\SzamlazzHu\Internal\Support;
 trait CustomerTaxSubjects {
 
     /**
-     * All the accepted payment methods
+     * All the accepted tax subjects
      *
      * @var array
      */
@@ -18,7 +18,7 @@ trait CustomerTaxSubjects {
     ];
 
     /**
-     * All the accepted payment methods
+     * All the accepted tax subjects
      * @return array
      */
     protected function taxSubjects()
