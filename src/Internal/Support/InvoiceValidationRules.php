@@ -102,6 +102,7 @@ trait InvoiceValidationRules
             'customerZipCode'           => ['required', 'string', 'max:255'],
             'customerCity'              => ['required', 'string', 'max:255'],
             'customerAddress'           => ['required', 'string', 'max:255'],
+            'customerTaxSubject'   => [Rule::in($this->taxSubjects())],
             'customerEmail'             => ['email'],
             'customerReceivesEmail'     => ['boolean'],
             'customerTaxNumber'         => ['string', 'alpha_dash', 'nullable'],
