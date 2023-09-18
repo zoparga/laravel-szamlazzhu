@@ -43,6 +43,7 @@ use zoparga\SzamlazzHu\Contracts\ArrayableMerchant;
 use zoparga\SzamlazzHu\Internal\AbstractInvoice;
 use zoparga\SzamlazzHu\Internal\AbstractModel;
 use zoparga\SzamlazzHu\Internal\Support\ClientAccessor;
+use zoparga\SzamlazzHu\Internal\Support\CustomerTaxSubjects;
 use zoparga\SzamlazzHu\Internal\Support\InvoiceValidationRules;
 use zoparga\SzamlazzHu\Internal\Support\MerchantHolder;
 use zoparga\SzamlazzHu\Internal\Support\NormalizeParsedNumericArrays;
@@ -59,6 +60,7 @@ class Client
     use MerchantHolder,
         PaymentMethods,
         NormalizeParsedNumericArrays,
+        CustomerTaxSubjects,
         InvoiceValidationRules,
         ReceiptValidationRules,
         XmlParser;
