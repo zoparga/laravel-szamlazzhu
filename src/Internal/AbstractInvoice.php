@@ -30,8 +30,10 @@ use zoparga\SzamlazzHu\Internal\Support\MerchantHolder;
  * @property boolean $isFinalInvoice
  * @property boolean $isReplacementInvoice
  * @property boolean $isPaid
+ * @property boolean $isPreview
  * @property string $invoicePrefix
  * @property string $invoiceNumber
+ * @property string $pdf
  * @property boolean $isKata
  * @property-read boolean $shouldBePaid
  *
