@@ -48,6 +48,7 @@ class ProformaInvoice extends AbstractInvoice {
         'isReplacementInvoice' => false,
         'isPrepaymentRequest' => true,
         'isPaid' => false,
+        'isPreview' => false,
         'fulfillmentAt' => null,
     ];
 

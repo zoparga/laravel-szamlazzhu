@@ -76,6 +76,7 @@ abstract class AbstractInvoice extends AbstractModel
             'isReplacementInvoice',
             'isPrepaymentRequest',
             'isPaid',
+            'isPreview',
             'invoicePrefix',
             'invoiceNumber',
         ],
@@ -103,7 +104,9 @@ abstract class AbstractInvoice extends AbstractModel
         'isReplacementInvoice' => false,
         'isPrepaymentRequest' => false,
         'isPaid' => false,
+        'isPreview' => false,
         'fulfillmentAt' => null,
+        'pdf' => null,
     ];
 
     /**
@@ -155,7 +158,7 @@ abstract class AbstractInvoice extends AbstractModel
                     return Str::startsWith($key, 'merchant');
                 })
                 ->toArray();
-
+                
             // Fill up invoice head attributes
             if (! empty(! empty($headAttributes))) {
                 $this->fill($headAttributes);
