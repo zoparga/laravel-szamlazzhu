@@ -30,9 +30,11 @@ use zoparga\SzamlazzHu\Internal\Support\MerchantHolder;
  * @property boolean $isFinalInvoice
  * @property boolean $isReplacementInvoice
  * @property boolean $isPaid
+ * @property Carbon|string|null $paidAt
  * @property boolean $isPreview
  * @property string $invoicePrefix
  * @property string $invoiceNumber
+ * @property float $totalPaid
  * @property string $pdf
  * @property boolean $isKata
  * @property-read boolean $shouldBePaid
@@ -106,8 +108,10 @@ abstract class AbstractInvoice extends AbstractModel
         'isReplacementInvoice' => false,
         'isPrepaymentRequest' => false,
         'isPaid' => false,
+        'paidAt' => null,
         'isPreview' => false,
         'fulfillmentAt' => null,
+        'totalPaid' => 0,
         'pdf' => null,
     ];
 
