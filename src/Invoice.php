@@ -62,6 +62,7 @@ class Invoice extends AbstractInvoice {
         'isReplacementInvoice' => false,
         'isPrepaymentRequest' => false,
         'isPaid' => false,
+        'paidAt' => null,
         'isPreview' => false,
         'fulfillmentAt' => null,
     ];

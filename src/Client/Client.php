@@ -1174,8 +1174,14 @@ class Client
                 } else {
                     $totalPaid = $xml['kifizetesek']['kifizetes']['osszeg'];
                 }
+                if (array_column($xml['kifizetesek']['kifizetes'], 'datum')) {
+                    $paidAt = max(array_column($xml['kifizetesek']['kifizetes'], 'datum'));
+                } else {
+                    $paidAt = $xml['kifizetesek']['kifizetes']['datum'];
+                }
             } else {
                 $totalPaid = 0;
+                $paidAt = null;
             }
             $totalPaid = (int) $totalPaid;
             $totalSum = (int) $xml['osszegek']['totalossz']['brutto'];
@@ -1199,6 +1205,7 @@ class Client
                 'totalSum'            => $totalSum,
                 'totalPaid'           => $totalPaid,
                 'isPaid'              => $totalSum == $totalPaid ? true : false,
+                'paidAt'              => $paidAt ? Carbon::createFromFormat('Y-m-d', $paidAt) : null,
                 'pdf'                 => $xml['pdf'] ?? null ,
 
             ];
