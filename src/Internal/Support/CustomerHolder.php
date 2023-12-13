@@ -19,6 +19,7 @@ use zoparga\SzamlazzHu\Contracts\ArrayableCustomer;
  * @property-read string $customerCity
  * @property-read string $customerAddress
  * @property-read string $customerTaxNumber
+ * @property-read int $customerTaxSubject
  * @property-read string $customerShippingName
  * @property-read string $customerShippingCountry
  * @property-read string $customerShippingZipCode
@@ -45,6 +46,7 @@ trait CustomerHolder
         'customerCity',
         'customerAddress',
         'customerTaxNumber',
+        'customerTaxSubject',
         'customerShippingName',
         'customerShippingCountry',
         'customerShippingZipCode',

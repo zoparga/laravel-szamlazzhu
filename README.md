@@ -11,7 +11,7 @@ Implementation for Laravel which was made to support Szamlazz.hu Agent version o
 ### https://github.com/SzuniSOFT/laravel-szamlazzhu
 composer require SzuniSOFT/laravel-szamlazzhu
 
-I copied & published this package, because I needed Laravel 8 support, 
+I copied & published this package, because I needed Laravel 8 / 9 support, 
 which is require GuzzleHttp 7 & the maintainers don't want to add it yet.
 
 
