@@ -55,7 +55,7 @@ trait InvoiceValidationRules
             // The language of invoice (and email)
             'invoiceLanguage' => ['required', Rule::in(Invoice::$supportedLanguages)],
             // Currency used in invoice. Make sure all related prices, costs appear in the specified currency
-            'currency'        => ['required'],
+            'currency'        => ['required', 'string'],
             // Datetime fields
             'createdAt'       => ['required', 'date'],
             'fulfillmentAt'   => ['required', 'date'],
@@ -69,7 +69,7 @@ trait InvoiceValidationRules
             // This is usually the locally stored incremental identifier of order.
             // It is important to be specified because the common invoice can be
             // obtained from proforma invoice only if it is specified.
-            'orderNumber'     => ['required', 'alpha_num'],
+            'orderNumber'     => ['required', 'alpha_dash'],
 
             'isImprestInvoice'          => ['required', 'boolean'],
             'isFinalInvoice'            => ['required', 'boolean'],
@@ -85,7 +85,7 @@ trait InvoiceValidationRules
              * Exchange rate is required if the currency differs from HUF
              * */
             'exchangeRate' => [
-                'required_unless:exchangeRateBank,MNB,currency,Ft,currency,HUF',
+                'required_unless:exchangeRateBank,MNB,exchangeRateBank,null,currency,Ft,currency,HUF',
             ],
 
             /* ----------------------------------------------------------
@@ -99,6 +99,7 @@ trait InvoiceValidationRules
              * Customer fields
              * -------------------------------------------------------- */
             'customerName'              => ['required', 'string', 'max:255'],
+            'customerCountry'           => ['string', 'max:255'],
             'customerZipCode'           => ['required', 'string', 'max:255'],
             'customerCity'              => ['required', 'string', 'max:255'],
             'customerAddress'           => ['required', 'string', 'max:255'],
@@ -107,6 +108,7 @@ trait InvoiceValidationRules
             'customerReceivesEmail'     => ['boolean'],
             'customerTaxNumber'         => ['string', 'alpha_dash', 'nullable'],
             'customerShippingName'      => ['string', 'max:255'],
+            'customerShippingCountry'   => ['string', 'max:255'],
             'customerShippingZipCode'   => ['string', 'max:255'],
             'customerShippingCity'      => ['string', 'max:255'],
             'customerShippingAddress'   => ['string', 'max:255'],
@@ -116,7 +118,7 @@ trait InvoiceValidationRules
              * -------------------------------------------------------- */
             'items'                     => ['required', 'array', 'min:1'],
             'items.*.name'              => ['required', 'string'],
-            'items.*.quantity'          => ['required', 'integer', 'min:1'],
+            'items.*.quantity'          => ['required', 'numeric', 'min:1'],
             'items.*.quantityUnit'      => ['required', 'string'],
             'items.*.netUnitPrice'      => ['required', 'numeric'],
             'items.*.taxRate'           => ['required'],

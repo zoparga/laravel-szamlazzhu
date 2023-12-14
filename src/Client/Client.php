@@ -760,6 +760,9 @@ class Client
                 $writer->startElement('vevo');
                 {
                     $this->writeCdataElement($writer, 'nev', $invoice->customerName);
+                    if ($invoice->customerCountry) {
+                        $this->writeCdataElement($writer, 'orszag', $invoice->customerCountry);
+                    }
                     $this->writeCdataElement($writer, 'irsz', $invoice->customerZipCode);
                     $this->writeCdataElement($writer, 'telepules', $invoice->customerCity);
                     $this->writeCdataElement($writer, 'cim', $invoice->customerAddress);
@@ -775,6 +778,9 @@ class Client
                     }
                     if ($invoice->customerShippingName) {
                         $this->writeCdataElement($writer, 'postazasiNev', $invoice->customerShippingName);
+                    }
+                    if ($invoice->customerShippingCountry) {
+                        $this->writeCdataElement($writer, 'postazasiOrszag', $invoice->customerShippingCountry);
                     }
                     if ($invoice->customerShippingZipCode) {
                         $this->writeCdataElement($writer, 'postazasiIrsz', $invoice->customerShippingZipCode);

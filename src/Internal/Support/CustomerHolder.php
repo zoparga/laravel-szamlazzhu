@@ -14,12 +14,14 @@ use zoparga\SzamlazzHu\Contracts\ArrayableCustomer;
  * [Attributes]
  * @property-read string $customerEmail
  * @property-read string $customerName
+ * @property-read string $customerCountry
  * @property-read string $customerZipCode
  * @property-read string $customerCity
  * @property-read string $customerAddress
  * @property-read string $customerTaxNumber
  * @property-read int $customerTaxSubject
  * @property-read string $customerShippingName
+ * @property-read string $customerShippingCountry
  * @property-read string $customerShippingZipCode
  * @property-read string $customerShippingCity
  * @property-read string $customerShippingAddress
@@ -39,12 +41,14 @@ trait CustomerHolder
     protected $customerAttributes = [
         'customerEmail',
         'customerName',
+        'customerCountry',
         'customerZipCode',
         'customerCity',
         'customerAddress',
         'customerTaxNumber',
         'customerTaxSubject',
         'customerShippingName',
+        'customerShippingCountry',
         'customerShippingZipCode',
         'customerShippingCity',
         'customerShippingAddress',
