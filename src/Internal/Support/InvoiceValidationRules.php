@@ -38,7 +38,7 @@ trait InvoiceValidationRules
             /* ----------------------------------------------------------
              * Customer fields
              * -------------------------------------------------------- */
-            'customerEmail'             => ['email'],
+            'customerEmail'             => ['nullable', 'email'],
         ];
     }
 
