@@ -981,10 +981,13 @@ class Client
                 }
                 $writer->endElement();
 
-                $writer->startElement('vevo');
-                {
-                    $writer->writeElement('email', $invoice->customerEmail);
-                    $writer->writeElement('sendEmail', $this->stringifyBoolean($invoice->customerReceivesEmail));
+                if ($invoice->customerReceivesEmail) {
+                    $writer->startElement('vevo');
+                    {
+                        $writer->writeElement('email', $invoice->customerEmail);
+                        // For some reason this does not work:
+                        // $writer->writeElement('sendEmail', $this->stringifyBoolean($invoice->customerReceivesEmail));
+                    }
                 }
                 $writer->endElement();
             },
