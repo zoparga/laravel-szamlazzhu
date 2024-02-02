@@ -983,8 +983,8 @@ class Client
 
                 $writer->startElement('vevo');
                 {
-                    $writer->writeElement('sendEmail', $this->stringifyBoolean($invoice->customerReceivesEmail));
                     $writer->writeElement('email', $invoice->customerEmail);
+                    $writer->writeElement('sendEmail', $this->stringifyBoolean($invoice->customerReceivesEmail));
                 }
                 $writer->endElement();
             },
