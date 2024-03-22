@@ -1,6 +1,5 @@
 <?php
 
-
 namespace zoparga\SzamlazzHu\Client;
 
 use Carbon\Carbon;
@@ -14,6 +13,7 @@ use InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface;
 use RuntimeException;
 use SebastianBergmann\CodeCoverage\ParserException;
+use XMLWriter;
 use zoparga\SzamlazzHu\Client\ApiErrors\AuthenticationException;
 use zoparga\SzamlazzHu\Client\ApiErrors\CannotCreateInvoiceException;
 use zoparga\SzamlazzHu\Client\ApiErrors\CommonResponseException;
@@ -53,7 +53,6 @@ use zoparga\SzamlazzHu\Invoice;
 use zoparga\SzamlazzHu\ProformaInvoice;
 use zoparga\SzamlazzHu\Receipt;
 use zoparga\SzamlazzHu\Util\XmlParser;
-use XMLWriter;
 
 class Client
 {
@@ -81,21 +80,21 @@ class Client
     private const ACTIONS = [
 
         // Used for cancelling (existing) invoices
-        'CANCEL_INVOICE'          => [
-            'name'   => 'action-szamla_agent_st',
+        'CANCEL_INVOICE' => [
+            'name' => 'action-szamla_agent_st',
             'schema' => [
                 /*
                  * Important! Please always note order
                  * */
                 'xmlszamlast', // Action name
                 'http://www.szamlazz.hu/xmlszamlast', // Namespace
-                'http://www.szamlazz.hu/xmlszamlast xmlszamlast.xsd' // Schema location
+                'http://www.szamlazz.hu/xmlszamlast xmlszamlast.xsd', // Schema location
             ],
         ],
 
         // Used for deleting (existing) proforma invoices
         'DELETE_PROFORMA_INVOICE' => [
-            'name'   => 'action-szamla_agent_dijbekero_torlese',
+            'name' => 'action-szamla_agent_dijbekero_torlese',
             'schema' => [
                 'xmlszamladbkdel',
                 'http://www.szamlazz.hu/xmlszamladbkdel',
@@ -104,8 +103,8 @@ class Client
         ],
 
         // Used for obtaining (both) invoices and proforma invoices
-        'GET_COMMON_INVOICE'      => [
-            'name'   => 'action-szamla_agent_xml',
+        'GET_COMMON_INVOICE' => [
+            'name' => 'action-szamla_agent_xml',
             'schema' => [
                 'xmlszamlaxml',
                 'http://www.szamlazz.hu/xmlszamlaxml',
@@ -114,8 +113,8 @@ class Client
         ],
 
         // Used to upload (create) new common and proforma invoice
-        'UPLOAD_COMMON_INVOICE'   => [
-            'name'   => 'action-xmlagentxmlfile',
+        'UPLOAD_COMMON_INVOICE' => [
+            'name' => 'action-xmlagentxmlfile',
             'schema' => [
                 'xmlszamla',
                 'http://www.szamlazz.hu/xmlszamla',
@@ -124,8 +123,8 @@ class Client
         ],
 
         // Used to create / update receipt
-        'UPLOAD_RECEIPT'          => [
-            'name'   => 'action-szamla_agent_nyugta_create',
+        'UPLOAD_RECEIPT' => [
+            'name' => 'action-szamla_agent_nyugta_create',
             'schema' => [
                 'xmlnyugtacreate',
                 'http://www.szamlazz.hu/xmlnyugtacreate',
@@ -134,8 +133,8 @@ class Client
         ],
 
         // Cancelling receipt
-        'CANCEL_RECEIPT'          => [
-            'name'   => 'action-szamla_agent_nyugta_storno',
+        'CANCEL_RECEIPT' => [
+            'name' => 'action-szamla_agent_nyugta_storno',
             'schema' => [
                 'xmlnyugtast',
                 'http://www.szamlazz.hu/xmlnyugtast',
@@ -144,8 +143,8 @@ class Client
         ],
 
         // Obtaining a single receipt
-        'GET_RECEIPT'             => [
-            'name'   => 'action-szamla_agent_nyugta_get',
+        'GET_RECEIPT' => [
+            'name' => 'action-szamla_agent_nyugta_get',
             'schema' => [
                 'xmlnyugtaget',
                 'http://www.szamlazz.hu/xmlnyugtaget',
@@ -170,15 +169,15 @@ class Client
      * @var array
      */
     protected $defaultConfig = [
-        'timeout'     => 30,
-        'base_uri'    => 'https://www.szamlazz.hu/',
+        'timeout' => 30,
+        'base_uri' => 'https://www.szamlazz.hu/',
         'certificate' => [
             'enabled' => false,
         ],
-        'storage'     => [
+        'storage' => [
             'auto_save' => false,
-            'disk'      => 'local',
-            'path'      => 'szamlazzhu',
+            'disk' => 'local',
+            'path' => 'szamlazzhu',
         ],
     ];
 
@@ -190,9 +189,9 @@ class Client
     /**
      * Client constructor.
      *
-     * @param array                   $config
-     * @param \GuzzleHttp\Client      $client
-     * @param array|ArrayableMerchant $merchant
+     * @param  array  $config
+     * @param  \GuzzleHttp\Client  $client
+     * @param  array|ArrayableMerchant  $merchant
      *
      * @throws InvalidClientConfigurationException
      */
@@ -201,7 +200,7 @@ class Client
         $this->config = array_merge($this->defaultConfig, $config);
         static::validateConfig($this->config);
 
-        if (!empty($merchant)) {
+        if (! empty($merchant)) {
             $this->defaultMerchant = $this->simplifyMerchant($merchant);
         }
 
@@ -217,7 +216,7 @@ class Client
     }
 
     /**
-     * @param array $config
+     * @param  array  $config
      *
      * @throws InvalidClientConfigurationException
      */
@@ -226,10 +225,10 @@ class Client
         $rules = [
             'credentials.username' => 'required_without:credentials.api_key',
             'credentials.password' => 'required_without:credentials.api_key',
-            'credentials.api_key'  => 'required_without:credentials.username',
-            'certificate.enabled'  => ['required', 'boolean'],
-            'certificate'          => ['sometimes', 'array'],
-            'certificate.path'     => [
+            'credentials.api_key' => 'required_without:credentials.username',
+            'certificate.enabled' => ['required', 'boolean'],
+            'certificate' => ['sometimes', 'array'],
+            'certificate.path' => [
                 'required_if:certificate.enabled,1',
                 'bail',
                 'required_with_all:certificate.disk',
@@ -239,18 +238,18 @@ class Client
 
                         if ($certificate['enabled'] && isset($certificate['disk'])) {
                             $disk = $config['certificate']['disk'];
-                            if (!Storage::disk($disk)->exists($value)) {
+                            if (! Storage::disk($disk)->exists($value)) {
                                 return $fail("The specified cert file could not be resolved from disk [$disk] at path [$value]!");
                             }
                         }
                     }
                 },
             ],
-            'timeout'              => ['integer', 'min:10', 'max:300'],
-            'base_uri'             => ['url'],
+            'timeout' => ['integer', 'min:10', 'max:300'],
+            'base_uri' => ['url'],
         ];
 
-        if (isset($config['certificate'], $config['certificate']['enabled']) && !!$config['certificate']['enabled']) {
+        if (isset($config['certificate'], $config['certificate']['enabled']) && (bool) $config['certificate']['enabled']) {
             $rules['certificate.disk'] = ['required'];
         }
 
@@ -295,7 +294,6 @@ class Client
 
     /**
      * @param $value
-     *
      * @return string
      */
     protected function stringifyBoolean($value)
@@ -307,7 +305,6 @@ class Client
 
     /**
      * @param $value
-     *
      * @return string
      */
     protected function commonCurrencyFormat($value)
@@ -316,9 +313,9 @@ class Client
     }
 
     /**
-     * @param XMLWriter $writer
-     * @param           $element
-     * @param           $content
+     * @param  XMLWriter  $writer
+     * @param    $element
+     * @param    $content
      */
     protected function writeCdataElement(XMLWriter &$writer, $element, $content)
     {
@@ -328,9 +325,8 @@ class Client
     }
 
     /**
-     * @param AbstractModel $abstractModel
-     * @param array         $rules
-     *
+     * @param  AbstractModel  $abstractModel
+     * @param  array  $rules
      * @return \Illuminate\Contracts\Validation\Validator
      */
     protected function modelValidator(AbstractModel $abstractModel, array $rules)
@@ -341,10 +337,10 @@ class Client
     /**
      * Validates invoice against the specified rules
      *
-     * @param AbstractModel $model
-     * @param array         $rules
-     *
+     * @param  AbstractModel  $model
+     * @param  array  $rules
      * @return bool
+     *
      * @throws ReceiptValidationException
      * @throws InvoiceValidationException
      */
@@ -359,18 +355,18 @@ class Client
                 throw new ReceiptValidationException($model, $validator);
             }
         }
+
         return true;
     }
 
     /**
-     * @param ResponseInterface $response
-     *
+     * @param  ResponseInterface  $response
      * @return bool
      */
     protected function isAuthenticationError(ResponseInterface $response)
     {
         try {
-            $xml = $this->parse((string)$response->getBody());
+            $xml = $this->parse((string) $response->getBody());
             if (isset($xml['sikeres']) && $xml['sikeres'] === 'false'
                 && isset($xml['hibauzenet']) && $xml['hibauzenet'] === 'Sikertelen bejelentkezés.') {
                 return true;
@@ -383,22 +379,22 @@ class Client
     /**
      * Converts API error to catchable local exception
      *
-     * @param ResponseInterface $response
+     * @param  ResponseInterface  $response
      *
      * @throws CommonResponseException
      */
     protected function convertResponseToException(ResponseInterface $response)
     {
-        $code    = 500;
+        $code = 500;
         $message = 'Unknown error';
 
         if ($response->hasHeader('szlahu_error_code')) {
             $code = $response->getHeader('szlahu_error_code')[0];
         } elseif ($this->isAuthenticationError($response)) {
             $code = 2;
-        } elseif (preg_match("/<hibakod>([0-9]+)\<\/hibakod>/", (string)$response->getBody(), $matches)) {
+        } elseif (preg_match("/<hibakod>([0-9]+)\<\/hibakod>/", (string) $response->getBody(), $matches)) {
             if (isset($matches[1]) && is_numeric($matches[1])) {
-                $code = (int)$matches[1];
+                $code = (int) $matches[1];
             }
         }
 
@@ -410,7 +406,7 @@ class Client
 
         $exceptionClass = null;
 
-        switch ((int)$code) {
+        switch ((int) $code) {
             case 3:
                 $exceptionClass = AuthenticationException::class;
                 break;
@@ -468,15 +464,15 @@ class Client
     /**
      * Process the response obtained over HTTP
      *
-     * @param ResponseInterface $response
-     *
+     * @param  ResponseInterface  $response
      * @return ResponseInterface
+     *
      * @throws CommonResponseException
      */
     protected function processResponse(ResponseInterface $response)
     {
         if ($response->hasHeader('szlahu_error_code') or
-            str_contains((string)$response->getBody(), '<sikeres>false</sikeres>')) {
+            str_contains((string) $response->getBody(), '<sikeres>false</sikeres>')) {
             $this->convertResponseToException($response);
         }
 
@@ -486,17 +482,16 @@ class Client
     /**
      * Sends request to Szamlazz.hu server
      *
-     * @param string $action
-     * @param string $contents
-     * @param string $uri
-     * @param string $method
-     *
+     * @param  string  $action
+     * @param  string  $contents
+     * @param  string  $uri
+     * @param  string  $method
      * @return ResponseInterface
      */
     protected function send(string $action, string $contents, $uri = '/szamla/', $method = 'POST')
     {
         $options = [
-            'timeout'  => $this->config['timeout'],
+            'timeout' => $this->config['timeout'],
             'base_uri' => $this->config['base_uri'],
         ];
 
@@ -513,12 +508,12 @@ class Client
         if ($action && $contents) {
             $options['multipart'] = [
                 [
-                    'name'     => $action,
+                    'name' => $action,
                     'filename' => 'invoice.xml',
                     'contents' => $contents,
                 ],
             ];
-        };
+        }
 
         return $this->client->requestAsync($method, $uri, $options)
             ->then(function (Response $response) {
@@ -529,18 +524,17 @@ class Client
     }
 
     /**
-     * @param        $disk
-     * @param        $path
-     * @param string $pdfContent
-     * @param string $as
-     *
+     * @param    $disk
+     * @param    $path
+     * @param  string  $pdfContent
+     * @param  string  $as
      * @return bool
      */
     protected function updatePdfFile($disk, $path, $pdfContent, $as)
     {
-        $fullPath = $path . "/$as";
+        $fullPath = $path."/$as";
 
-        return ($this->shouldSavePdf() && !Storage::disk($disk)->exists($fullPath))
+        return ($this->shouldSavePdf() && ! Storage::disk($disk)->exists($fullPath))
             ? Storage::disk($disk)->put($fullPath, $pdfContent)
             : false;
     }
@@ -548,7 +542,7 @@ class Client
     /**
      * Writes auth credentials via the given writer
      *
-     * @param XMLWriter $writer
+     * @param  XMLWriter  $writer
      */
     protected function writeCredentials(XMLWriter &$writer)
     {
@@ -561,28 +555,27 @@ class Client
     }
 
     /**
-     * @param string $invoiceClass
-     * @param array  $head
-     * @param array  $customer
-     * @param array  $merchant
-     * @param array  $items
-     *
+     * @param  string  $invoiceClass
+     * @param  array  $head
+     * @param  array  $customer
+     * @param  array  $merchant
+     * @param  array  $items
      * @return AbstractInvoice|ClientAccessor|Invoice|ProformaInvoice
      */
     protected function invoiceFactory($invoiceClass, array $head, array $customer, array $merchant, array $items)
     {
-        /**  @var ClientAccessor $invoice */
+        /** @var ClientAccessor $invoice */
         $invoice = new $invoiceClass($head, $items, $customer, $merchant);
         $invoice->setClient($this);
+
         return $invoice;
     }
 
     /**
-     * @param callable|Closure $write
-     * @param                  $root
-     * @param string           $namespace
-     * @param string           $schemaLocation
-     *
+     * @param  callable|Closure  $write
+     * @param    $root
+     * @param  string  $namespace
+     * @param  string  $schemaLocation
      * @return string
      */
     protected function writer(
@@ -603,13 +596,14 @@ class Client
 
         $write($writer);
         $writer->endElement();
+
         return $writer->outputMemory();
     }
 
     /**
-     * @param Receipt $receipt
-     *
+     * @param  Receipt  $receipt
      * @return bool
+     *
      * @throws ReceiptValidationException|ModelValidationException
      */
     public function validateReceiptForSaving(Receipt $receipt)
@@ -618,9 +612,9 @@ class Client
     }
 
     /**
-     * @param Invoice $invoice
-     *
+     * @param  Invoice  $invoice
      * @return bool
+     *
      * @throws InvoiceValidationException|ModelValidationException
      */
     public function validateInvoiceForSaving(Invoice $invoice)
@@ -629,9 +623,9 @@ class Client
     }
 
     /**
-     * @param ProformaInvoice $invoice
-     *
+     * @param  ProformaInvoice  $invoice
      * @return bool
+     *
      * @throws InvoiceValidationException|ModelValidationException
      */
     public function validateProformaInvoiceForSaving(ProformaInvoice $invoice)
@@ -640,12 +634,12 @@ class Client
     }
 
     /**
-     * @param ProformaInvoice $invoice
-     * @param bool            $withoutPdf
-     * @param null            $emailSubject
-     * @param null            $emailMessage
-     *
+     * @param  ProformaInvoice  $invoice
+     * @param  bool  $withoutPdf
+     * @param  null  $emailSubject
+     * @param  null  $emailMessage
      * @return InvoiceCreationResponse
+     *
      * @throws ModelValidationException
      */
     public function uploadProFormaInvoice(ProformaInvoice $invoice, $withoutPdf = false, $emailSubject = null, $emailMessage = null)
@@ -656,12 +650,12 @@ class Client
     /**
      * Creates invoice
      *
-     * @param Invoice $invoice
-     * @param bool    $withoutPdf
-     * @param null    $emailSubject
-     * @param null    $emailMessage
-     *
+     * @param  Invoice  $invoice
+     * @param  bool  $withoutPdf
+     * @param  null  $emailSubject
+     * @param  null  $emailMessage
      * @return InvoiceCreationResponse
+     *
      * @throws \zoparga\SzamlazzHu\Client\Errors\ModelValidationException
      */
     public function uploadInvoice(Invoice $invoice, $withoutPdf = false, $emailSubject = null, $emailMessage = null)
@@ -670,12 +664,12 @@ class Client
     }
 
     /**
-     * @param AbstractInvoice $invoice
-     * @param bool            $withoutPdf
-     * @param null            $emailSubject
-     * @param null            $emailMessage
-     *
+     * @param  AbstractInvoice  $invoice
+     * @param  bool  $withoutPdf
+     * @param  null  $emailSubject
+     * @param  null  $emailMessage
      * @return InvoiceCreationResponse
+     *
      * @throws ModelValidationException
      */
     protected function uploadCommonInvoice(AbstractInvoice $invoice, $withoutPdf = false, $emailSubject = null, $emailMessage = null)
@@ -683,9 +677,9 @@ class Client
         /*
          * Use fallback merchant.
          * */
-        if (!$invoice->hasMerchant() && $this->defaultMerchant === null) {
-            throw new InvalidArgumentException("No merchant configured on invoice! Please specify the merchant on the invoice or setup the default merchant in the configuration!");
-        } elseif (!$invoice->hasMerchant() && $this->defaultMerchant) {
+        if (! $invoice->hasMerchant() && $this->defaultMerchant === null) {
+            throw new InvalidArgumentException('No merchant configured on invoice! Please specify the merchant on the invoice or setup the default merchant in the configuration!');
+        } elseif (! $invoice->hasMerchant() && $this->defaultMerchant) {
             $invoice->setMerchant($this->defaultMerchant);
         }
 
@@ -703,105 +697,105 @@ class Client
                  * Common settings of invoice
                  * */
                 $writer->startElement('beallitasok');
-                {
-                    $this->writeCredentials($writer);
-                    $writer->writeElement('eszamla', $this->stringifyBoolean($invoice->isElectronic));
-                    //$writer->writeElement('kulcstartojelszo', '');
-                    $writer->writeElement('szamlaLetoltes', $this->stringifyBoolean(!$withoutPdf));
-                    $writer->writeElement('valaszVerzio', 2);
-                    $writer->writeElement('aggregator', '');
-                }
+
+                $this->writeCredentials($writer);
+                $writer->writeElement('eszamla', $this->stringifyBoolean($invoice->isElectronic));
+                //$writer->writeElement('kulcstartojelszo', '');
+                $writer->writeElement('szamlaLetoltes', $this->stringifyBoolean(! $withoutPdf));
+                $writer->writeElement('valaszVerzio', 2);
+                $writer->writeElement('aggregator', '');
+
                 $writer->endElement();
 
                 /*
                  * Header info of invoice
                  * */
                 $writer->startElement('fejlec');
-                {
-                    $writer->writeElement('keltDatum', $invoice->createdAt->format('Y-m-d'));
-                    $writer->writeElement('teljesitesDatum', $invoice->fulfillmentAt->format('Y-m-d'));
-                    $writer->writeElement('fizetesiHataridoDatum', $invoice->paymentDeadline->format('Y-m-d'));
-                    $writer->writeElement('fizmod', $this->getPaymentMethodByAlias($invoice->paymentMethod));
-                    $writer->writeElement('penznem', $invoice->currency);
-                    $writer->writeElement('szamlaNyelve', $invoice->invoiceLanguage);
-                    $this->writeCdataElement($writer, 'megjegyzes', $invoice->comment ?: '');
-                    if ($invoice->exchangeRateBank) {
-                        $writer->writeElement('arfolyamBank', $invoice->exchangeRateBank);
-                    }
-                    if ($invoice->exchangeRate) {
-                        $writer->writeElement('arfolyam', number_format($invoice->exchangeRate, 3, '.', ''));
-                    }
-                    if ($invoice->orderNumber) {
-                        $this->writeCdataElement($writer, 'rendelesSzam', $invoice->orderNumber);
-                    }
-                    $writer->writeElement('elolegszamla', $this->stringifyBoolean($invoice->isImprestInvoice));
-                    $writer->writeElement('vegszamla', $this->stringifyBoolean($invoice->isFinalInvoice));
-                    $writer->writeElement('helyesbitoszamla', $this->stringifyBoolean($invoice->isReplacementInvoice));
-                    $writer->writeElement('dijbekero', $this->stringifyBoolean(($invoice instanceof ProformaInvoice)));
-                    if ($invoice->invoicePrefix) {
-                        $this->writeCdataElement($writer, 'szamlaszamElotag', $invoice->invoicePrefix);
-                    }
-                    $writer->writeElement('fizetve', $this->stringifyBoolean($invoice->isPaid));
+
+                $writer->writeElement('keltDatum', $invoice->createdAt->format('Y-m-d'));
+                $writer->writeElement('teljesitesDatum', $invoice->fulfillmentAt->format('Y-m-d'));
+                $writer->writeElement('fizetesiHataridoDatum', $invoice->paymentDeadline->format('Y-m-d'));
+                $writer->writeElement('fizmod', $this->getPaymentMethodByAlias($invoice->paymentMethod));
+                $writer->writeElement('penznem', $invoice->currency);
+                $writer->writeElement('szamlaNyelve', $invoice->invoiceLanguage);
+                $this->writeCdataElement($writer, 'megjegyzes', $invoice->comment ?: '');
+                if ($invoice->exchangeRateBank) {
+                    $writer->writeElement('arfolyamBank', $invoice->exchangeRateBank);
                 }
+                if ($invoice->exchangeRate) {
+                    $writer->writeElement('arfolyam', number_format($invoice->exchangeRate, 3, '.', ''));
+                }
+                if ($invoice->orderNumber) {
+                    $this->writeCdataElement($writer, 'rendelesSzam', $invoice->orderNumber);
+                }
+                $writer->writeElement('elolegszamla', $this->stringifyBoolean($invoice->isImprestInvoice));
+                $writer->writeElement('vegszamla', $this->stringifyBoolean($invoice->isFinalInvoice));
+                $writer->writeElement('helyesbitoszamla', $this->stringifyBoolean($invoice->isReplacementInvoice));
+                $writer->writeElement('dijbekero', $this->stringifyBoolean(($invoice instanceof ProformaInvoice)));
+                if ($invoice->invoicePrefix) {
+                    $this->writeCdataElement($writer, 'szamlaszamElotag', $invoice->invoicePrefix);
+                }
+                $writer->writeElement('fizetve', $this->stringifyBoolean($invoice->isPaid));
+
                 $writer->endElement();
 
                 /*
                  * Merchant details
                  * */
                 $writer->startElement('elado');
-                {
-                    $writer->writeElement('bank', $invoice->merchantBank);
-                    $writer->writeElement('bankszamlaszam', $invoice->merchantBankAccountNumber);
-                    if ($invoice->merchantReplyEmailAddress) {
-                        $writer->writeElement('emailReplyto', $invoice->merchantReplyEmailAddress);
-                    }
-                    if ($emailSubject) {
-                        $this->writeCdataElement($writer, 'emailTargy', $emailSubject);
-                    }
-                    if ($emailMessage) {
-                        $this->writeCdataElement($writer, 'emailSzoveg', $emailMessage);
-                    }
+
+                $writer->writeElement('bank', $invoice->merchantBank);
+                $writer->writeElement('bankszamlaszam', $invoice->merchantBankAccountNumber);
+                if ($invoice->merchantReplyEmailAddress) {
+                    $writer->writeElement('emailReplyto', $invoice->merchantReplyEmailAddress);
                 }
+                if ($emailSubject) {
+                    $this->writeCdataElement($writer, 'emailTargy', $emailSubject);
+                }
+                if ($emailMessage) {
+                    $this->writeCdataElement($writer, 'emailSzoveg', $emailMessage);
+                }
+
                 $writer->endElement();
 
                 /*
                  * Customer details
                  * */
                 $writer->startElement('vevo');
-                {
-                    $this->writeCdataElement($writer, 'nev', $invoice->customerName);
-                    if ($invoice->customerCountry) {
-                        $this->writeCdataElement($writer, 'orszag', $invoice->customerCountry);
-                    }
-                    $this->writeCdataElement($writer, 'irsz', $invoice->customerZipCode);
-                    $this->writeCdataElement($writer, 'telepules', $invoice->customerCity);
-                    $this->writeCdataElement($writer, 'cim', $invoice->customerAddress);
-                    if ($invoice->customerEmail) {
-                        $writer->writeElement('email', $invoice->customerEmail);
-                    }
-                    $writer->writeElement('sendEmail', $this->stringifyBoolean($invoice->customerReceivesEmail));
-                    if ($invoice->customerTaxNumber) {
-                        $this->writeCdataElement($writer, 'adoszam', $invoice->customerTaxNumber);
-                    }
-                    if ($invoice->customerTaxNumberEU) {
-                        $this->writeCdataElement($writer, 'adoszamEU', $invoice->customerTaxNumberEU);
-                    }
-                    if ($invoice->customerShippingName) {
-                        $this->writeCdataElement($writer, 'postazasiNev', $invoice->customerShippingName);
-                    }
-                    if ($invoice->customerShippingCountry) {
-                        $this->writeCdataElement($writer, 'postazasiOrszag', $invoice->customerShippingCountry);
-                    }
-                    if ($invoice->customerShippingZipCode) {
-                        $this->writeCdataElement($writer, 'postazasiIrsz', $invoice->customerShippingZipCode);
-                    }
-                    if ($invoice->customerShippingCity) {
-                        $this->writeCdataElement($writer, 'postazasiTelepules', $invoice->customerShippingCity);
-                    }
-                    if ($invoice->customerShippingAddress) {
-                        $this->writeCdataElement($writer, 'postazasiCim', $invoice->customerShippingAddress);
-                    }
+
+                $this->writeCdataElement($writer, 'nev', $invoice->customerName);
+                if ($invoice->customerCountry) {
+                    $this->writeCdataElement($writer, 'orszag', $invoice->customerCountry);
                 }
+                $this->writeCdataElement($writer, 'irsz', $invoice->customerZipCode);
+                $this->writeCdataElement($writer, 'telepules', $invoice->customerCity);
+                $this->writeCdataElement($writer, 'cim', $invoice->customerAddress);
+                if ($invoice->customerEmail) {
+                    $writer->writeElement('email', $invoice->customerEmail);
+                }
+                $writer->writeElement('sendEmail', $this->stringifyBoolean($invoice->customerReceivesEmail));
+                if ($invoice->customerTaxNumber) {
+                    $this->writeCdataElement($writer, 'adoszam', $invoice->customerTaxNumber);
+                }
+                if ($invoice->customerTaxNumberEU) {
+                    $this->writeCdataElement($writer, 'adoszamEU', $invoice->customerTaxNumberEU);
+                }
+                if ($invoice->customerShippingName) {
+                    $this->writeCdataElement($writer, 'postazasiNev', $invoice->customerShippingName);
+                }
+                if ($invoice->customerShippingCountry) {
+                    $this->writeCdataElement($writer, 'postazasiOrszag', $invoice->customerShippingCountry);
+                }
+                if ($invoice->customerShippingZipCode) {
+                    $this->writeCdataElement($writer, 'postazasiIrsz', $invoice->customerShippingZipCode);
+                }
+                if ($invoice->customerShippingCity) {
+                    $this->writeCdataElement($writer, 'postazasiTelepules', $invoice->customerShippingCity);
+                }
+                if ($invoice->customerShippingAddress) {
+                    $this->writeCdataElement($writer, 'postazasiCim', $invoice->customerShippingAddress);
+                }
+
                 $writer->endElement();
 
                 /*
@@ -810,33 +804,33 @@ class Client
                 $writer->startElement('tetelek');
                 $invoice->items()->each(function (array $item) use (&$writer) {
                     $writer->startElement('tetel');
-                    {
-                        $this->writeCdataElement($writer, 'megnevezes', $item['name']);
-                        $writer->writeElement('mennyiseg', $item['quantity']);
-                        $this->writeCdataElement($writer, 'mennyisegiEgyseg', $item['quantityUnit']);
-                        $writer->writeElement('nettoEgysegar', $this->commonCurrencyFormat($item['netUnitPrice']));
-                        $writer->writeElement('afakulcs', $item['taxRate']);
 
-                        $netUnitPrice = $item['netUnitPrice'];
-                        $taxRate      = is_numeric($item['taxRate']) ? $item['taxRate'] : 0;
-                        $quantity     = $item['quantity'];
-                        $netPrice     = isset($item['netPrice'])
-                            ? $item['netPrice']
-                            : ($netUnitPrice * $quantity);
-                        $grossPrice   = isset($item['grossPrice'])
-                            ? $item['grossPrice']
-                            : $netPrice * (1 + ($taxRate / 100));
-                        $taxValue     = isset($item['taxValue'])
-                            ? $item['taxValue']
-                            : ($grossPrice - $netPrice);
+                    $this->writeCdataElement($writer, 'megnevezes', $item['name']);
+                    $writer->writeElement('mennyiseg', $item['quantity']);
+                    $this->writeCdataElement($writer, 'mennyisegiEgyseg', $item['quantityUnit']);
+                    $writer->writeElement('nettoEgysegar', $this->commonCurrencyFormat($item['netUnitPrice']));
+                    $writer->writeElement('afakulcs', $item['taxRate']);
 
-                        $writer->writeElement('nettoErtek', $this->commonCurrencyFormat($netPrice));
-                        $writer->writeElement('afaErtek', $this->commonCurrencyFormat($taxValue));
-                        $writer->writeElement('bruttoErtek', $this->commonCurrencyFormat($grossPrice));
-                        if (isset($item['comment']) && !empty($item['comment'])) {
-                            $this->writeCdataElement($writer, 'megjegyzes', $item['comment']);
-                        }
+                    $netUnitPrice = $item['netUnitPrice'];
+                    $taxRate = is_numeric($item['taxRate']) ? $item['taxRate'] : 0;
+                    $quantity = $item['quantity'];
+                    $netPrice = isset($item['netPrice'])
+                        ? $item['netPrice']
+                        : ($netUnitPrice * $quantity);
+                    $grossPrice = isset($item['grossPrice'])
+                        ? $item['grossPrice']
+                        : $netPrice * (1 + ($taxRate / 100));
+                    $taxValue = isset($item['taxValue'])
+                        ? $item['taxValue']
+                        : ($grossPrice - $netPrice);
+
+                    $writer->writeElement('nettoErtek', $this->commonCurrencyFormat($netPrice));
+                    $writer->writeElement('afaErtek', $this->commonCurrencyFormat($taxValue));
+                    $writer->writeElement('bruttoErtek', $this->commonCurrencyFormat($grossPrice));
+                    if (isset($item['comment']) && ! empty($item['comment'])) {
+                        $this->writeCdataElement($writer, 'megjegyzes', $item['comment']);
                     }
+
                     $writer->endElement();
                 });
                 $writer->endElement();
@@ -859,7 +853,7 @@ class Client
          * Saving (proforma) invoice PDF files - generated by the API
          * */
         if ($response->pdfBase64 &&
-            !$withoutPdf &&
+            ! $withoutPdf &&
             $this->shouldSavePdf()
         ) {
             $disk = $this->storageDisk();
@@ -884,9 +878,9 @@ class Client
     /**
      * Deletes only proforma invoices
      *
-     * @param ProformaInvoice $invoice
-     *
+     * @param  ProformaInvoice  $invoice
      * @return ProformaInvoiceDeletionResponse
+     *
      * @throws ModelValidationException
      */
     public function deleteProFormaInvoice(ProformaInvoice $invoice)
@@ -899,15 +893,15 @@ class Client
                  * Common settings of invoice
                  * */
                 $writer->startElement('beallitasok');
-                {
-                    $this->writeCredentials($writer);
-                }
+
+                $this->writeCredentials($writer);
+
                 $writer->endElement();
 
                 $writer->startElement('fejlec');
-                {
-                    $writer->writeElement('szamlaszam', $invoice->invoiceNumber);
-                }
+
+                $writer->writeElement('szamlaszam', $invoice->invoiceNumber);
+
                 $writer->endElement();
             },
             ...self::ACTIONS['DELETE_PROFORMA_INVOICE']['schema']
@@ -923,12 +917,12 @@ class Client
     /**
      * Cancels (existing) invoice
      *
-     * @param Invoice $invoice
-     * @param bool    $withoutPdf
-     * @param null    $emailSubject
-     * @param null    $emailMessage
-     *
+     * @param  Invoice  $invoice
+     * @param  bool  $withoutPdf
+     * @param  null  $emailSubject
+     * @param  null  $emailMessage
      * @return InvoiceCancellationResponse
+     *
      * @throws InvoiceValidationException
      * @throws ReceiptValidationException
      */
@@ -948,44 +942,44 @@ class Client
                  * Common settings of invoice
                  * */
                 $writer->startElement('beallitasok');
-                {
-                    $this->writeCredentials($writer);
-                    $writer->writeElement('eszamla', $this->stringifyBoolean($invoice->isElectronic));
-                    //$writer->writeElement('kulcstartojelszo', '');
-                    $writer->writeElement('szamlaLetoltes', $this->stringifyBoolean(false));
-                    $writer->writeElement('szamlaLetoltesPld', 1);
-                }
+
+                $this->writeCredentials($writer);
+                $writer->writeElement('eszamla', $this->stringifyBoolean($invoice->isElectronic));
+                //$writer->writeElement('kulcstartojelszo', '');
+                $writer->writeElement('szamlaLetoltes', $this->stringifyBoolean(false));
+                $writer->writeElement('szamlaLetoltesPld', 1);
+
                 $writer->endElement();
 
                 $writer->startElement('fejlec');
-                {
-                    $writer->writeElement('szamlaszam', $invoice->invoiceNumber);
-                    $writer->writeElement('keltDatum', $invoice->createdAt->format('Y-m-d'));
-                    $writer->writeElement('teljesitesDatum', $invoice->fulfillmentAt->format('Y-m-d'));
-                    $writer->writeElement('tipus', 'SS');
-                }
+
+                $writer->writeElement('szamlaszam', $invoice->invoiceNumber);
+                $writer->writeElement('keltDatum', $invoice->createdAt->format('Y-m-d'));
+                $writer->writeElement('teljesitesDatum', $invoice->fulfillmentAt->format('Y-m-d'));
+                $writer->writeElement('tipus', 'SS');
+
                 $writer->endElement();
 
                 $writer->startElement('elado');
-                {
-                    if ($invoice->customerReceivesEmail) {
-                        if ($invoice->merchantReplyEmailAddress) {
-                            $writer->writeElement('emailReplyto', $invoice->merchantReplyEmailAddress);
-                        }
-                        if ($emailSubject) {
-                            $this->writeCdataElement($writer, 'emailTargy', $emailSubject);
-                        }
-                        if ($emailMessage) {
-                            $this->writeCdataElement($writer, 'emailSzoveg', $emailMessage);
-                        }
+
+                if ($invoice->customerReceivesEmail) {
+                    if ($invoice->merchantReplyEmailAddress) {
+                        $writer->writeElement('emailReplyto', $invoice->merchantReplyEmailAddress);
+                    }
+                    if ($emailSubject) {
+                        $this->writeCdataElement($writer, 'emailTargy', $emailSubject);
+                    }
+                    if ($emailMessage) {
+                        $this->writeCdataElement($writer, 'emailSzoveg', $emailMessage);
                     }
                 }
+
                 $writer->endElement();
 
                 $writer->startElement('vevo');
-                {
-                    $writer->writeElement('email', $invoice->customerEmail);
-                }
+
+                $writer->writeElement('email', $invoice->customerEmail);
+
                 $writer->endElement();
             },
             ...self::ACTIONS['CANCEL_INVOICE']['schema']
@@ -997,34 +991,33 @@ class Client
             $this->send(self::ACTIONS['CANCEL_INVOICE']['name'], $contents)
         );
 
-
         // Since the API responds with XML or PDF we have to choose one.
-        if (!$withoutPdf && $this->shouldSavePdf()) {
+        if (! $withoutPdf && $this->shouldSavePdf()) {
             $contents = $this->writer(
                 function (XMLWriter $writer) use (&$invoice) {
                     /*
                      * Common settings of invoice
                      * */
                     $writer->startElement('beallitasok');
-                    {
-                        $this->writeCredentials($writer);
-                        $writer->writeElement('eszamla', $this->stringifyBoolean($invoice->isElectronic));
-                        // $writer->writeElement('kulcstartojelszo', '');
-                        $writer->writeElement('szamlaLetoltes', $this->stringifyBoolean(true));
-                        $writer->writeElement('szamlaLetoltesPld', 1);
-                    }
+
+                    $this->writeCredentials($writer);
+                    $writer->writeElement('eszamla', $this->stringifyBoolean($invoice->isElectronic));
+                    // $writer->writeElement('kulcstartojelszo', '');
+                    $writer->writeElement('szamlaLetoltes', $this->stringifyBoolean(true));
+                    $writer->writeElement('szamlaLetoltesPld', 1);
+
                     $writer->endElement();
 
                     $writer->startElement('fejlec');
-                    {
-                        $writer->writeElement('szamlaszam', $invoice->invoiceNumber);
-                    }
+
+                    $writer->writeElement('szamlaszam', $invoice->invoiceNumber);
+
                     $writer->endElement();
                 },
                 ...self::ACTIONS['CANCEL_INVOICE']['schema']
             );
 
-            $pdf = (string)$this->send(self::ACTIONS['CANCEL_INVOICE']['name'], $contents)->getBody();
+            $pdf = (string) $this->send(self::ACTIONS['CANCEL_INVOICE']['name'], $contents)->getBody();
             $this->updatePdfFile($this->storageDisk(), $this->storagePath(), $pdf, "$response->cancellationInvoiceNumber.pdf");
         }
 
@@ -1033,8 +1026,8 @@ class Client
 
     /**
      * @param $orderNumber
-     *
      * @return Invoice|ProformaInvoice|AbstractInvoice
+     *
      * @throws CommonResponseException
      */
     public function getInvoiceByOrderNumber($orderNumber)
@@ -1048,14 +1041,15 @@ class Client
 
     /**
      * @param $orderNumber
-     *
      * @return mixed
+     *
      * @throws CommonResponseException
      * @throws InvoiceNotFoundException
      */
     public function getInvoiceByOrderNumberOrFail($orderNumber)
     {
         [$head, $customer, $merchant, $items] = $this->getCommonInvoice(null, $orderNumber);
+
         return $this->invoiceFactory(
             $head['isPrepaymentRequest'] ? ProformaInvoice::class : Invoice::class,
             $head,
@@ -1066,25 +1060,25 @@ class Client
     }
 
     /**
-     * @param string|Invoice $invoice
-     *
+     * @param  string|Invoice  $invoice
      * @return AbstractInvoice|Invoice|ProformaInvoice
+     *
      * @throws CommonResponseException
      * @throws InvoiceNotFoundException
      */
     public function getInvoiceOrFail($invoice)
     {
-        if (!is_string($invoice) && !$invoice instanceof Invoice) {
-            throw new InvalidArgumentException("Invoice needs to be either invoice number string or instance of [" . Invoice::class . "]");
+        if (! is_string($invoice) && ! $invoice instanceof Invoice) {
+            throw new InvalidArgumentException('Invoice needs to be either invoice number string or instance of ['.Invoice::class.']');
         }
 
         return $this->invoiceFactory(Invoice::class, ...$this->getCommonInvoice($invoice instanceof Invoice ? $invoice->invoiceNumber : $invoice));
     }
 
     /**
-     * @param string|Invoice $invoice
-     *
+     * @param  string|Invoice  $invoice
      * @return null|AbstractInvoice|Invoice|ProformaInvoice
+     *
      * @throws CommonResponseException
      */
     public function getInvoice($invoice)
@@ -1097,26 +1091,26 @@ class Client
     }
 
     /**
-     * @param string|ProformaInvoice $invoice
-     *
+     * @param  string|ProformaInvoice  $invoice
      * @return AbstractInvoice|Invoice|ProformaInvoice
+     *
      * @throws CommonResponseException
      * @throws InvoiceNotFoundException
      * @throws InvalidArgumentException
      */
     public function getProformaInvoiceOrFail($invoice)
     {
-        if (!is_string($invoice) && !$invoice instanceof ProformaInvoice) {
-            throw new InvalidArgumentException("Invoice needs to be either invoice number string or instance of [" . ProformaInvoice::class . "]");
+        if (! is_string($invoice) && ! $invoice instanceof ProformaInvoice) {
+            throw new InvalidArgumentException('Invoice needs to be either invoice number string or instance of ['.ProformaInvoice::class.']');
         }
 
         return $this->invoiceFactory(ProformaInvoice::class, ...$this->getCommonInvoice($invoice instanceof ProformaInvoice ? $invoice->invoiceNumber : $invoice));
     }
 
     /**
-     * @param string|ProformaInvoice $invoice
-     *
+     * @param  string|ProformaInvoice  $invoice
      * @return null|ProformaInvoice
+     *
      * @throws CommonResponseException
      */
     public function getProformaInvoice($invoice)
@@ -1129,17 +1123,17 @@ class Client
     }
 
     /**
-     * @param string|AbstractInvoice|null $invoiceNumber
-     * @param null                        $orderNumber
-     *
+     * @param  string|AbstractInvoice|null  $invoiceNumber
+     * @param  null  $orderNumber
      * @return array
+     *
      * @throws CommonResponseException
      * @throws InvoiceNotFoundException
      * @throws InvalidArgumentException
      */
     protected function getCommonInvoice($invoiceNumber = null, $orderNumber = null)
     {
-        if (!$invoiceNumber && !$orderNumber) {
+        if (! $invoiceNumber && ! $orderNumber) {
             throw new InvalidArgumentException('Invoice or the orderNumber must be specified!');
         }
 
@@ -1162,7 +1156,7 @@ class Client
             /*
              * Response obtained
              * */
-            $contents = (string)$this->send(self::ACTIONS['GET_COMMON_INVOICE']['name'], $contents)->getBody();
+            $contents = (string) $this->send(self::ACTIONS['GET_COMMON_INVOICE']['name'], $contents)->getBody();
 
             $xml = $this->parse($contents);
 
@@ -1180,25 +1174,24 @@ class Client
             $totalPaid = (int) $totalPaid;
             $totalSum = (int) $xml['osszegek']['totalossz']['brutto'];
 
-
             // General attributes
             $head = [
-                'isElectronic'        => Str::startsWith($xml['alap']['szamlaszam'], 'E-'),
+                'isElectronic' => Str::startsWith($xml['alap']['szamlaszam'], 'E-'),
                 'isPrepaymentRequest' => Str::startsWith($xml['alap']['szamlaszam'], 'D-'),
-                'invoiceNumber'       => $xml['alap']['szamlaszam'],
-                'createdAt'           => Carbon::createFromFormat('Y-m-d', $xml['alap']['kelt']),
-                'fulfillmentAt'       => Carbon::createFromFormat('Y-m-d', $xml['alap']['telj']),
-                'paymentDeadline'     => Carbon::createFromFormat('Y-m-d', $xml['alap']['fizh']),
-                'paymentMethod'       => $this->getPaymentMethod(html_entity_decode($xml['alap']['fizmod'])),
-                'invoiceLanguage'     => $xml['alap']['nyelv'],
-                'currency'            => $xml['alap']['devizanem'],
-                'exchangeRateBank'    => isset($xml['alap']['devizabank']) ? $xml['alap']['devizabank'] : null,
-                'exchangeRate'        => isset($xml['alap']['devizaarf']) ? $xml['alap']['devizaarf'] : null,
-                'comment'             => html_entity_decode($xml['alap']['megjegyzes']),
-                'isKata'              => $xml['alap']['kata'] == 'true',
-                'totalSum'            => $totalSum,
-                'totalPaid'           => $totalPaid,
-                'isPaid'              => $totalSum == $totalPaid ? true : false,
+                'invoiceNumber' => $xml['alap']['szamlaszam'],
+                'createdAt' => Carbon::createFromFormat('Y-m-d', $xml['alap']['kelt']),
+                'fulfillmentAt' => Carbon::createFromFormat('Y-m-d', $xml['alap']['telj']),
+                'paymentDeadline' => Carbon::createFromFormat('Y-m-d', $xml['alap']['fizh']),
+                'paymentMethod' => $this->getPaymentMethod(html_entity_decode($xml['alap']['fizmod'])),
+                'invoiceLanguage' => $xml['alap']['nyelv'],
+                'currency' => $xml['alap']['devizanem'],
+                'exchangeRateBank' => isset($xml['alap']['devizabank']) ? $xml['alap']['devizabank'] : null,
+                'exchangeRate' => isset($xml['alap']['devizaarf']) ? $xml['alap']['devizaarf'] : null,
+                'comment' => html_entity_decode($xml['alap']['megjegyzes']),
+                'isKata' => $xml['alap']['kata'] == 'true',
+                'totalSum' => $totalSum,
+                'totalPaid' => $totalPaid,
+                'isPaid' => $totalSum == $totalPaid ? true : false,
 
             ];
 
@@ -1212,25 +1205,25 @@ class Client
 
             // Customer fields
             $customer = [
-                'customerName'      => html_entity_decode($xml['vevo']['nev']),
-                'customerCountry'   => html_entity_decode($xml['vevo']['cim']['orszag'] ?? ''),
-                'customerZipCode'   => $xml['vevo']['cim']['irsz'],
-                'customerCity'      => html_entity_decode($xml['vevo']['cim']['telepules']),
-                'customerAddress'   => $xml['vevo']['cim']['cim'],
+                'customerName' => html_entity_decode($xml['vevo']['nev']),
+                'customerCountry' => html_entity_decode($xml['vevo']['cim']['orszag'] ?? ''),
+                'customerZipCode' => $xml['vevo']['cim']['irsz'],
+                'customerCity' => html_entity_decode($xml['vevo']['cim']['telepules']),
+                'customerAddress' => $xml['vevo']['cim']['cim'],
                 'customerTaxNumber' => $xml['vevo']['adoszam'],
                 'customerTaxNumberEU' => $xml['vevo']['adoszamEU'],
             ];
 
             // Merchant fields
             $merchant = [
-                'merchantName'              => html_entity_decode($xml['szallito']['nev']),
-                'merchantCountry'           => html_entity_decode($xml['szallito']['cim']['orszag']),
-                'merchantZipCode'           => html_entity_decode($xml['szallito']['cim']['irsz']),
-                'merchantCity'              => html_entity_decode($xml['szallito']['cim']['telepules']),
-                'merchantAddress'           => html_entity_decode($xml['szallito']['cim']['cim']),
-                'merchantTaxNumber'         => html_entity_decode($xml['szallito']['adoszam']),
-                'merchantEuTaxNumber'       => isset($xml['szallito']['adoszameu']) ? html_entity_decode($xml['szallito']['adoszameu']) : null,
-                'merchantBank'              => html_entity_decode($xml['szallito']['bank']['nev']),
+                'merchantName' => html_entity_decode($xml['szallito']['nev']),
+                'merchantCountry' => html_entity_decode($xml['szallito']['cim']['orszag']),
+                'merchantZipCode' => html_entity_decode($xml['szallito']['cim']['irsz']),
+                'merchantCity' => html_entity_decode($xml['szallito']['cim']['telepules']),
+                'merchantAddress' => html_entity_decode($xml['szallito']['cim']['cim']),
+                'merchantTaxNumber' => html_entity_decode($xml['szallito']['adoszam']),
+                'merchantEuTaxNumber' => isset($xml['szallito']['adoszameu']) ? html_entity_decode($xml['szallito']['adoszameu']) : null,
+                'merchantBank' => html_entity_decode($xml['szallito']['bank']['nev']),
                 'merchantBankAccountNumber' => $xml['szallito']['bank']['bankszamla'],
             ];
 
@@ -1238,20 +1231,20 @@ class Client
             $items = Collection::wrap($items = $this->normalizeToNumericArray($xml['tetelek']['tetel']))
                 ->map(function ($item) {
                     return [
-                        'name'            => html_entity_decode($item['nev']),
-                        'quantity'        => (double)$item['mennyiseg'],
-                        'quantityUnit'    => $item['mennyisegiegyseg'],
-                        'netUnitPrice'    => (double)$item['nettoegysegar'],
-                        'taxRate'         => is_numeric($item['afakulcs']) ? (double)$item['afakulcs'] : $item['afakulcs'],
-                        'totalNetPrice'   => (double)$item['netto'],
-                        'taxValue'        => (double)$item['afa'],
-                        'totalGrossPrice' => (double)$item['brutto'],
-                        'comment'         => html_entity_decode($item['megjegyzes']),
+                        'name' => html_entity_decode($item['nev']),
+                        'quantity' => (float) $item['mennyiseg'],
+                        'quantityUnit' => $item['mennyisegiegyseg'],
+                        'netUnitPrice' => (float) $item['nettoegysegar'],
+                        'taxRate' => is_numeric($item['afakulcs']) ? (float) $item['afakulcs'] : $item['afakulcs'],
+                        'totalNetPrice' => (float) $item['netto'],
+                        'taxValue' => (float) $item['afa'],
+                        'totalGrossPrice' => (float) $item['brutto'],
+                        'comment' => html_entity_decode($item['megjegyzes']),
                     ];
                 })
                 ->toArray();
         } catch (CommonResponseException $exception) {
-            if (Str::contains((string)$exception->getResponse()->getBody(), '(ismeretlen számlaszám).')) {
+            if (Str::contains((string) $exception->getResponse()->getBody(), '(ismeretlen számlaszám).')) {
                 throw new InvoiceNotFoundException($invoiceNumber);
             }
 
@@ -1269,10 +1262,10 @@ class Client
     }
 
     /**
-     * @param Receipt $receipt
-     * @param bool    $withoutPdf
-     *
+     * @param  Receipt  $receipt
+     * @param  bool  $withoutPdf
      * @return ReceiptCreationResponse
+     *
      * @throws ModelValidationException
      */
     public function uploadReceipt(Receipt $receipt, $withoutPdf = false)
@@ -1285,29 +1278,29 @@ class Client
         $contents = $this->writer(
             function (XMLWriter $writer) use (&$receipt, &$withoutPdf) {
                 $writer->startElement('beallitasok');
-                {
-                    $this->writeCredentials($writer);
-                    $writer->writeElement('pdfLetoltes', $this->stringifyBoolean(!$withoutPdf || $this->shouldSavePdf()));
-                }
+
+                $this->writeCredentials($writer);
+                $writer->writeElement('pdfLetoltes', $this->stringifyBoolean(! $withoutPdf || $this->shouldSavePdf()));
+
                 $writer->endElement();
 
                 /*
                  * Header info of receipt
                  * */
                 $writer->startElement('fejlec');
-                {
-                    $writer->writeElement('hivasAzonosito', $receipt->orderNumber);
-                    $writer->writeElement('elotag', $receipt->prefix);
-                    $writer->writeElement('fizmod', $this->getPaymentMethodByAlias($receipt->paymentMethod));
-                    $writer->writeElement('penznem', $receipt->currency);
-                    if ($receipt->exchangeRateBank) {
-                        $writer->writeElement('devizabank', $receipt->exchangeRateBank);
-                    }
-                    if ($receipt->exchangeRate) {
-                        $writer->writeElement('devizaarf', $receipt->exchangeRate);
-                    }
-                    $writer->writeElement('megjegyzes', $receipt->comment);
+
+                $writer->writeElement('hivasAzonosito', $receipt->orderNumber);
+                $writer->writeElement('elotag', $receipt->prefix);
+                $writer->writeElement('fizmod', $this->getPaymentMethodByAlias($receipt->paymentMethod));
+                $writer->writeElement('penznem', $receipt->currency);
+                if ($receipt->exchangeRateBank) {
+                    $writer->writeElement('devizabank', $receipt->exchangeRateBank);
                 }
+                if ($receipt->exchangeRate) {
+                    $writer->writeElement('devizaarf', $receipt->exchangeRate);
+                }
+                $writer->writeElement('megjegyzes', $receipt->comment);
+
                 $writer->endElement();
 
                 /*
@@ -1316,24 +1309,24 @@ class Client
                 $writer->startElement('tetelek');
                 $receipt->items()->each(function (array $item) use (&$writer) {
                     $writer->startElement('tetel');
-                    {
-                        $this->writeCdataElement($writer, 'megnevezes', $item['name']);
-                        $writer->writeElement('mennyiseg', $item['quantity']);
-                        $this->writeCdataElement($writer, 'mennyisegiEgyseg', $item['quantityUnit']);
-                        $writer->writeElement('nettoEgysegar', $this->commonCurrencyFormat($item['netUnitPrice']));
-                        $writer->writeElement('afakulcs', $item['taxRate']);
 
-                        $netUnitPrice = $item['netUnitPrice'];
-                        $taxRate      = is_numeric($item['taxRate']) ? $item['taxRate'] : 0;
-                        $quantity     = $item['quantity'];
-                        $netPrice     = isset($item['netPrice']) ? $item['netPrice'] : ($netUnitPrice * $quantity);
-                        $grossPrice   = isset($item['grossPrice']) ? $item['grossPrice'] : $netPrice * (1 + ($taxRate / 100));
-                        $taxValue     = isset($item['taxValue']) ? $item['taxValue'] : ($grossPrice - $netPrice);
+                    $this->writeCdataElement($writer, 'megnevezes', $item['name']);
+                    $writer->writeElement('mennyiseg', $item['quantity']);
+                    $this->writeCdataElement($writer, 'mennyisegiEgyseg', $item['quantityUnit']);
+                    $writer->writeElement('nettoEgysegar', $this->commonCurrencyFormat($item['netUnitPrice']));
+                    $writer->writeElement('afakulcs', $item['taxRate']);
 
-                        $writer->writeElement('netto', $this->commonCurrencyFormat($netPrice));
-                        $writer->writeElement('afa', $this->commonCurrencyFormat($taxValue));
-                        $writer->writeElement('brutto', $this->commonCurrencyFormat($grossPrice));
-                    }
+                    $netUnitPrice = $item['netUnitPrice'];
+                    $taxRate = is_numeric($item['taxRate']) ? $item['taxRate'] : 0;
+                    $quantity = $item['quantity'];
+                    $netPrice = isset($item['netPrice']) ? $item['netPrice'] : ($netUnitPrice * $quantity);
+                    $grossPrice = isset($item['grossPrice']) ? $item['grossPrice'] : $netPrice * (1 + ($taxRate / 100));
+                    $taxValue = isset($item['taxValue']) ? $item['taxValue'] : ($grossPrice - $netPrice);
+
+                    $writer->writeElement('netto', $this->commonCurrencyFormat($netPrice));
+                    $writer->writeElement('afa', $this->commonCurrencyFormat($taxValue));
+                    $writer->writeElement('brutto', $this->commonCurrencyFormat($grossPrice));
+
                     $writer->endElement();
                 });
                 $writer->endElement();
@@ -1345,13 +1338,13 @@ class Client
                     $writer->startElement('kifizetesek');
                     $receipt->payments()->each(function ($payment) use (&$writer) {
                         $writer->startElement('kifizetes');
-                        {
-                            $writer->writeElement('fizetoeszkoz', $this->getPaymentMethodByAlias($payment['paymentMethod']));
-                            $writer->writeElement('osszeg', $this->commonCurrencyFormat($payment['amount']));
-                            if (isset($payment['comment']) && !empty($payment['comment'])) {
-                                $this->writeCdataElement($writer, 'leiras', $payment['comment']);
-                            }
+
+                        $writer->writeElement('fizetoeszkoz', $this->getPaymentMethodByAlias($payment['paymentMethod']));
+                        $writer->writeElement('osszeg', $this->commonCurrencyFormat($payment['amount']));
+                        if (isset($payment['comment']) && ! empty($payment['comment'])) {
+                            $this->writeCdataElement($writer, 'leiras', $payment['comment']);
                         }
+
                         $writer->endElement();
                     });
                     $writer->endElement();
@@ -1367,16 +1360,16 @@ class Client
 
         // Fill up related attributes
         $receipt->fill([
-            'callId'        => $response->callId,
+            'callId' => $response->callId,
             'receiptNumber' => $response->receiptNumber,
-            'createdAt'     => $response->createdAt,
-            'isCancelled'   => $response->isCancelled,
+            'createdAt' => $response->createdAt,
+            'isCancelled' => $response->isCancelled,
         ]);
 
         /*
          * Saving receipt PDF files - generated by remote API
          * */
-        if ($this->shouldSavePdf() && !$withoutPdf) {
+        if ($this->shouldSavePdf() && ! $withoutPdf) {
             $this->updatePdfFile(
                 $this->storageDisk(),
                 $this->storagePath(),
@@ -1389,10 +1382,10 @@ class Client
     }
 
     /**
-     * @param Receipt $receipt
-     * @param bool    $withoutPdf
-     *
+     * @param  Receipt  $receipt
+     * @param  bool  $withoutPdf
      * @return ReceiptCancellationResponse
+     *
      * @throws ModelValidationException
      */
     public function cancelReceipt(Receipt $receipt, $withoutPdf = false)
@@ -1402,16 +1395,16 @@ class Client
         $contents = $this->writer(
             function (XMLWriter $writer) use (&$receipt, &$withoutPdf) {
                 $writer->startElement('beallitasok');
-                {
-                    $this->writeCredentials($writer);
-                    $writer->writeElement('pdfLetoltes', $this->stringifyBoolean(!$withoutPdf || $this->shouldSavePdf()));
-                }
+
+                $this->writeCredentials($writer);
+                $writer->writeElement('pdfLetoltes', $this->stringifyBoolean(! $withoutPdf || $this->shouldSavePdf()));
+
                 $writer->endElement();
 
                 $writer->startElement('fejlec');
-                {
-                    $writer->writeElement('nyugtaszam', $receipt->receiptNumber);
-                }
+
+                $writer->writeElement('nyugtaszam', $receipt->receiptNumber);
+
                 $writer->endElement();
             },
             ...self::ACTIONS['CANCEL_RECEIPT']['schema']
@@ -1423,12 +1416,12 @@ class Client
             $this->send(self::ACTIONS['CANCEL_RECEIPT']['name'], $contents)
         );
 
-        if ($response->pdfBase64 && $this->shouldSavePdf() && !$withoutPdf) {
+        if ($response->pdfBase64 && $this->shouldSavePdf() && ! $withoutPdf) {
             $this->updatePdfFile(
                 $this->storageDisk(),
                 $this->storagePath(),
                 base64_decode($response->pdfBase64),
-                $response->originalReceiptNumber . ".pdf"
+                $response->originalReceiptNumber.'.pdf'
             );
         }
 
@@ -1441,10 +1434,10 @@ class Client
     }
 
     /**
-     * @param Receipt $receipt
-     * @param bool    $withoutPdf
-     *
+     * @param  Receipt  $receipt
+     * @param  bool  $withoutPdf
      * @return null|Receipt
+     *
      * @throws ModelValidationException
      */
     public function getReceipt(Receipt $receipt, $withoutPdf = false)
@@ -1457,10 +1450,10 @@ class Client
     }
 
     /**
-     * @param Receipt $receipt
-     * @param bool    $withoutPdf
-     *
+     * @param  Receipt  $receipt
+     * @param  bool  $withoutPdf
      * @return Receipt
+     *
      * @throws ModelValidationException
      * @throws ReceiptNotFoundException
      */
@@ -1472,9 +1465,8 @@ class Client
     }
 
     /**
-     * @param      $receiptNumber
-     * @param bool $withoutPdf
-     *
+     * @param    $receiptNumber
+     * @param  bool  $withoutPdf
      * @return Receipt|null
      */
     public function getReceiptByReceiptNumber($receiptNumber, $withoutPdf = false)
@@ -1487,10 +1479,10 @@ class Client
     }
 
     /**
-     * @param string $receiptNumber
-     * @param bool   $withoutPdf
-     *
+     * @param  string  $receiptNumber
+     * @param  bool  $withoutPdf
      * @return Receipt
+     *
      * @throws ReceiptNotFoundException
      */
     public function getReceiptByReceiptNumberOrFail($receiptNumber, $withoutPdf = false)
@@ -1498,41 +1490,41 @@ class Client
         $contents = $this->writer(
             function (XMLWriter $writer) use (&$receiptNumber, &$withoutPdf) {
                 $writer->startElement('beallitasok');
-                {
-                    $this->writeCredentials($writer);
-                    $writer->writeElement('pdfLetoltes', $this->stringifyBoolean(!$withoutPdf));
-                }
+
+                $this->writeCredentials($writer);
+                $writer->writeElement('pdfLetoltes', $this->stringifyBoolean(! $withoutPdf));
+
                 $writer->endElement();
 
                 $writer->startElement('fejlec');
-                {
-                    $writer->writeElement('nyugtaszam', $receiptNumber);
-                }
+
+                $writer->writeElement('nyugtaszam', $receiptNumber);
+
                 $writer->endElement();
             },
             ...self::ACTIONS['GET_RECEIPT']['schema']
         );
 
-        $contents = (string)$this->send(self::ACTIONS['GET_RECEIPT']['name'], $contents)->getBody();
+        $contents = (string) $this->send(self::ACTIONS['GET_RECEIPT']['name'], $contents)->getBody();
 
         try {
             $xml = $this->parse($contents);
 
             // General attributes
             $head = [
-                'callId'                => isset($xml['nyugta']['alap']['hivasAzonosito']) ? $xml['nyugta']['alap']['hivasAzonosito'] : null,
-                'receiptNumber'         => $xml['nyugta']['alap']['nyugtaszam'],
-                'isCancelled'           => $xml['nyugta']['alap']['stornozott'] === 'true',
-                'createdAt'             => Carbon::createFromFormat('Y-m-d', $xml['nyugta']['alap']['kelt']),
-                'exchangeRateBank'      => isset($xml['nyugta']['alap']['devizabank'])
+                'callId' => isset($xml['nyugta']['alap']['hivasAzonosito']) ? $xml['nyugta']['alap']['hivasAzonosito'] : null,
+                'receiptNumber' => $xml['nyugta']['alap']['nyugtaszam'],
+                'isCancelled' => $xml['nyugta']['alap']['stornozott'] === 'true',
+                'createdAt' => Carbon::createFromFormat('Y-m-d', $xml['nyugta']['alap']['kelt']),
+                'exchangeRateBank' => isset($xml['nyugta']['alap']['devizabank'])
                     ? $xml['nyugta']['alap']['devizabank']
                     : null,
-                'exchangeRate'          => isset($xml['nyugta']['alap']['devizaarf'])
-                    ? (double)$xml['nyugta']['alap']['devizaarf']
+                'exchangeRate' => isset($xml['nyugta']['alap']['devizaarf'])
+                    ? (float) $xml['nyugta']['alap']['devizaarf']
                     : null,
-                'paymentMethod'         => $this->getPaymentMethodByType(html_entity_decode($xml['nyugta']['alap']['fizmod'])),
-                'currency'              => $xml['nyugta']['alap']['penznem'],
-                'comment'               => isset($xml['nyugta']['alap']['megjegyzes']) ? $xml['nyugta']['alap']['megjegyzes'] : null,
+                'paymentMethod' => $this->getPaymentMethodByType(html_entity_decode($xml['nyugta']['alap']['fizmod'])),
+                'currency' => $xml['nyugta']['alap']['penznem'],
+                'comment' => isset($xml['nyugta']['alap']['megjegyzes']) ? $xml['nyugta']['alap']['megjegyzes'] : null,
                 'originalReceiptNumber' => isset($xml['nyugta']['alap']['stornozottNyugtaszam'])
                     ? $xml['nyugta']['alap']['stornozottNyugtaszam']
                     : null,
@@ -1544,14 +1536,14 @@ class Client
                 $items = Collection::wrap($this->normalizeToNumericArray($xml['nyugta']['tetelek']['tetel']))
                     ->map(function ($item) {
                         return [
-                            'name'            => $item['megnevezes'],
-                            'quantity'        => (double)$item['mennyiseg'],
-                            'quantityUnit'    => $item['mennyisegiEgyseg'],
-                            'netUnitPrice'    => (double)$item['nettoEgysegar'],
-                            'totalNetPrice'   => (double)$item['netto'],
-                            'taxRate'         => is_numeric($item['afakulcs']) ? (double)$item['afakulcs'] : $item['afakulcs'],
-                            'taxValue'        => (double)$item['afa'],
-                            'totalGrossPrice' => (double)$item['brutto'],
+                            'name' => $item['megnevezes'],
+                            'quantity' => (float) $item['mennyiseg'],
+                            'quantityUnit' => $item['mennyisegiEgyseg'],
+                            'netUnitPrice' => (float) $item['nettoEgysegar'],
+                            'totalNetPrice' => (float) $item['netto'],
+                            'taxRate' => is_numeric($item['afakulcs']) ? (float) $item['afakulcs'] : $item['afakulcs'],
+                            'taxValue' => (float) $item['afa'],
+                            'totalGrossPrice' => (float) $item['brutto'],
                         ];
                     })
                     ->toArray();
@@ -1564,8 +1556,8 @@ class Client
                     ->map(function ($payment) {
                         return [
                             'paymentMethod' => $this->getPaymentMethodByType(html_entity_decode($payment['fizetoeszkoz'])),
-                            'amount'        => (float)$payment['osszeg'],
-                            'comment'       => isset($payment['leiras']) ? $payment['leiras'] : null,
+                            'amount' => (float) $payment['osszeg'],
+                            'comment' => isset($payment['leiras']) ? $payment['leiras'] : null,
                         ];
                     })
                     ->toArray();
@@ -1574,12 +1566,12 @@ class Client
             /*
              * Saving receipt PDF files - generated by remote API
              * */
-            if (isset($xml['nyugtaPdf']) && $xml['nyugtaPdf'] !== '' && $this->shouldSavePdf() && !$withoutPdf) {
+            if (isset($xml['nyugtaPdf']) && $xml['nyugtaPdf'] !== '' && $this->shouldSavePdf() && ! $withoutPdf) {
                 $this->updatePdfFile(
                     $this->storageDisk(),
                     $this->storagePath(),
                     base64_decode($xml['nyugtaPdf']),
-                    $xml['nyugta']['alap']['nyugtaszam'] . ".pdf"
+                    $xml['nyugta']['alap']['nyugtaszam'].'.pdf'
                 );
             }
         } catch (ParserException $exception) {
