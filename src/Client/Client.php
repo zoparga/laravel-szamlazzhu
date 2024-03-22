@@ -65,6 +65,16 @@ class Client
         ReceiptValidationRules,
         XmlParser;
 
+    public const NON_EU_COMPANY = 7;
+
+    public const EU_COMPANY = 6;
+
+    public const HUNGARIAN_TAX_ID = 1;
+
+    public const UNKNOWN = 0;
+
+    public const NO_TAX_ID = -1;
+
     /*
      * All the available actions.
      * */
@@ -773,6 +783,9 @@ class Client
                     if ($invoice->customerTaxNumber) {
                         $this->writeCdataElement($writer, 'adoszam', $invoice->customerTaxNumber);
                     }
+                    if ($invoice->customerTaxNumberEU) {
+                        $this->writeCdataElement($writer, 'adoszamEU', $invoice->customerTaxNumberEU);
+                    }
                     if ($invoice->customerTaxSubject) {
                         $writer->writeElement('adoalany', $invoice->customerTaxSubject);
                     }
@@ -1208,6 +1221,7 @@ class Client
                 'customerCity'      => html_entity_decode($xml['vevo']['cim']['telepules']),
                 'customerAddress'   => $xml['vevo']['cim']['cim'],
                 'customerTaxNumber' => $xml['vevo']['adoszam'],
+                'customerTaxNumberEU' => $xml['vevo']['adoszamEU'],
             ];
 
             // Merchant fields
