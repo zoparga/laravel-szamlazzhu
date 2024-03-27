@@ -775,6 +775,9 @@ class Client
                     if ($invoice->customerTaxNumber) {
                         $this->writeCdataElement($writer, 'adoszam', $invoice->customerTaxNumber);
                     }
+                    if ($invoice->customerEuTaxNumber) {
+                        $writer->writeElement('adoszamEU', $invoice->customerEuTaxNumber);
+                    }
                     if ($invoice->customerTaxSubject) {
                         $writer->writeElement('adoalany', $invoice->customerTaxSubject);
                     }
@@ -1231,6 +1234,7 @@ class Client
                 'customerCity'      => html_entity_decode($xml['vevo']['cim']['telepules']),
                 'customerAddress'   => $xml['vevo']['cim']['cim'],
                 'customerTaxNumber' => $xml['vevo']['adoszam'],
+                'customerEuTaxNumber' => $xml['vevo']['adoszameu'] ?? null,
             ];
 
             // Merchant fields

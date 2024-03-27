@@ -1,6 +1,5 @@
 <?php
 
-
 namespace zoparga\SzamlazzHu\Internal\Support;
 
 use Illuminate\Support\Str;
@@ -19,6 +18,7 @@ use zoparga\SzamlazzHu\Contracts\ArrayableCustomer;
  * @property-read string $customerCity
  * @property-read string $customerAddress
  * @property-read string $customerTaxNumber
+ * @property-read string $customerEuTaxNumber
  * @property-read int $customerTaxSubject
  * @property-read string $customerShippingName
  * @property-read string $customerShippingCountry
@@ -29,7 +29,6 @@ use zoparga\SzamlazzHu\Contracts\ArrayableCustomer;
  */
 trait CustomerHolder
 {
-
     /**
      * @var array|null
      */
@@ -46,6 +45,7 @@ trait CustomerHolder
         'customerCity',
         'customerAddress',
         'customerTaxNumber',
+        'customerEuTaxNumber',
         'customerTaxSubject',
         'customerShippingName',
         'customerShippingCountry',
