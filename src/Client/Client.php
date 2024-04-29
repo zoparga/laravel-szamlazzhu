@@ -56,11 +56,11 @@ use zoparga\SzamlazzHu\Util\XmlParser;
 
 class Client
 {
-    use MerchantHolder,
-        PaymentMethods,
-        NormalizeParsedNumericArrays,
-        CustomerTaxSubjects,
+    use CustomerTaxSubjects,
         InvoiceValidationRules,
+        MerchantHolder,
+        NormalizeParsedNumericArrays,
+        PaymentMethods,
         ReceiptValidationRules,
         XmlParser;
 
@@ -189,8 +189,6 @@ class Client
     /**
      * Client constructor.
      *
-     * @param  array  $config
-     * @param  \GuzzleHttp\Client  $client
      * @param  array|ArrayableMerchant  $merchant
      *
      * @throws InvalidClientConfigurationException
@@ -216,8 +214,6 @@ class Client
     }
 
     /**
-     * @param  array  $config
-     *
      * @throws InvalidClientConfigurationException
      */
     protected static function validateConfig(array $config)
@@ -293,7 +289,6 @@ class Client
     }
 
     /**
-     * @param $value
      * @return string
      */
     protected function stringifyBoolean($value)
@@ -304,7 +299,6 @@ class Client
     }
 
     /**
-     * @param $value
      * @return string
      */
     protected function commonCurrencyFormat($value)
@@ -312,11 +306,6 @@ class Client
         return number_format($value, 3, '.', '');
     }
 
-    /**
-     * @param  XMLWriter  $writer
-     * @param    $element
-     * @param    $content
-     */
     protected function writeCdataElement(XMLWriter &$writer, $element, $content)
     {
         $writer->startElement($element);
@@ -325,8 +314,6 @@ class Client
     }
 
     /**
-     * @param  AbstractModel  $abstractModel
-     * @param  array  $rules
      * @return \Illuminate\Contracts\Validation\Validator
      */
     protected function modelValidator(AbstractModel $abstractModel, array $rules)
@@ -337,8 +324,6 @@ class Client
     /**
      * Validates invoice against the specified rules
      *
-     * @param  AbstractModel  $model
-     * @param  array  $rules
      * @return bool
      *
      * @throws ReceiptValidationException
@@ -360,7 +345,6 @@ class Client
     }
 
     /**
-     * @param  ResponseInterface  $response
      * @return bool
      */
     protected function isAuthenticationError(ResponseInterface $response)
@@ -379,7 +363,6 @@ class Client
     /**
      * Converts API error to catchable local exception
      *
-     * @param  ResponseInterface  $response
      *
      * @throws CommonResponseException
      */
@@ -464,7 +447,6 @@ class Client
     /**
      * Process the response obtained over HTTP
      *
-     * @param  ResponseInterface  $response
      * @return ResponseInterface
      *
      * @throws CommonResponseException
@@ -482,8 +464,6 @@ class Client
     /**
      * Sends request to Szamlazz.hu server
      *
-     * @param  string  $action
-     * @param  string  $contents
      * @param  string  $uri
      * @param  string  $method
      * @return ResponseInterface
@@ -524,8 +504,6 @@ class Client
     }
 
     /**
-     * @param    $disk
-     * @param    $path
      * @param  string  $pdfContent
      * @param  string  $as
      * @return bool
@@ -541,8 +519,6 @@ class Client
 
     /**
      * Writes auth credentials via the given writer
-     *
-     * @param  XMLWriter  $writer
      */
     protected function writeCredentials(XMLWriter &$writer)
     {
@@ -556,10 +532,6 @@ class Client
 
     /**
      * @param  string  $invoiceClass
-     * @param  array  $head
-     * @param  array  $customer
-     * @param  array  $merchant
-     * @param  array  $items
      * @return AbstractInvoice|ClientAccessor|Invoice|ProformaInvoice
      */
     protected function invoiceFactory($invoiceClass, array $head, array $customer, array $merchant, array $items)
@@ -573,7 +545,6 @@ class Client
 
     /**
      * @param  callable|Closure  $write
-     * @param    $root
      * @param  string  $namespace
      * @param  string  $schemaLocation
      * @return string
@@ -601,7 +572,6 @@ class Client
     }
 
     /**
-     * @param  Receipt  $receipt
      * @return bool
      *
      * @throws ReceiptValidationException|ModelValidationException
@@ -612,7 +582,6 @@ class Client
     }
 
     /**
-     * @param  Invoice  $invoice
      * @return bool
      *
      * @throws InvoiceValidationException|ModelValidationException
@@ -623,7 +592,6 @@ class Client
     }
 
     /**
-     * @param  ProformaInvoice  $invoice
      * @return bool
      *
      * @throws InvoiceValidationException|ModelValidationException
@@ -634,7 +602,6 @@ class Client
     }
 
     /**
-     * @param  ProformaInvoice  $invoice
      * @param  bool  $withoutPdf
      * @param  null  $emailSubject
      * @param  null  $emailMessage
@@ -650,7 +617,6 @@ class Client
     /**
      * Creates invoice
      *
-     * @param  Invoice  $invoice
      * @param  bool  $withoutPdf
      * @param  null  $emailSubject
      * @param  null  $emailMessage
@@ -664,7 +630,6 @@ class Client
     }
 
     /**
-     * @param  AbstractInvoice  $invoice
      * @param  bool  $withoutPdf
      * @param  null  $emailSubject
      * @param  null  $emailMessage
@@ -878,7 +843,6 @@ class Client
     /**
      * Deletes only proforma invoices
      *
-     * @param  ProformaInvoice  $invoice
      * @return ProformaInvoiceDeletionResponse
      *
      * @throws ModelValidationException
@@ -917,7 +881,6 @@ class Client
     /**
      * Cancels (existing) invoice
      *
-     * @param  Invoice  $invoice
      * @param  bool  $withoutPdf
      * @param  null  $emailSubject
      * @param  null  $emailMessage
@@ -1025,7 +988,6 @@ class Client
     }
 
     /**
-     * @param $orderNumber
      * @return Invoice|ProformaInvoice|AbstractInvoice
      *
      * @throws CommonResponseException
@@ -1040,7 +1002,6 @@ class Client
     }
 
     /**
-     * @param $orderNumber
      * @return mixed
      *
      * @throws CommonResponseException
@@ -1211,7 +1172,7 @@ class Client
                 'customerCity' => html_entity_decode($xml['vevo']['cim']['telepules']),
                 'customerAddress' => $xml['vevo']['cim']['cim'],
                 'customerTaxNumber' => $xml['vevo']['adoszam'],
-                'customerTaxNumberEU' => $xml['vevo']['adoszamEU'],
+                'customerTaxNumberEU' => $xml['vevo']['adoszamEU'] ?? '',
             ];
 
             // Merchant fields
@@ -1262,7 +1223,6 @@ class Client
     }
 
     /**
-     * @param  Receipt  $receipt
      * @param  bool  $withoutPdf
      * @return ReceiptCreationResponse
      *
@@ -1382,7 +1342,6 @@ class Client
     }
 
     /**
-     * @param  Receipt  $receipt
      * @param  bool  $withoutPdf
      * @return ReceiptCancellationResponse
      *
@@ -1434,7 +1393,6 @@ class Client
     }
 
     /**
-     * @param  Receipt  $receipt
      * @param  bool  $withoutPdf
      * @return null|Receipt
      *
@@ -1450,7 +1408,6 @@ class Client
     }
 
     /**
-     * @param  Receipt  $receipt
      * @param  bool  $withoutPdf
      * @return Receipt
      *
@@ -1465,7 +1422,6 @@ class Client
     }
 
     /**
-     * @param    $receiptNumber
      * @param  bool  $withoutPdf
      * @return Receipt|null
      */
