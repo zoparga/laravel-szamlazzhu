@@ -18,9 +18,6 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
                 'username' => 'test',
                 'password' => 'test'
             ],
-            'certificate' => [
-                'enabled' => false
-            ]
         ]);
 
     }
