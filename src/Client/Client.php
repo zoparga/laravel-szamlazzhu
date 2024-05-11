@@ -222,32 +222,9 @@ class Client
             'credentials.username' => 'required_without:credentials.api_key',
             'credentials.password' => 'required_without:credentials.api_key',
             'credentials.api_key' => 'required_without:credentials.username',
-            'certificate.enabled' => ['required', 'boolean'],
-            'certificate' => ['sometimes', 'array'],
-            'certificate.path' => [
-                'required_if:certificate.enabled,1',
-                'bail',
-                'required_with_all:certificate.disk',
-                function ($attribute, $value, $fail) use (&$config) {
-                    if (isset($config['certificate'])) {
-                        $certificate = $config['certificate'];
-
-                        if ($certificate['enabled'] && isset($certificate['disk'])) {
-                            $disk = $config['certificate']['disk'];
-                            if (! Storage::disk($disk)->exists($value)) {
-                                return $fail("The specified cert file could not be resolved from disk [$disk] at path [$value]!");
-                            }
-                        }
-                    }
-                },
-            ],
             'timeout' => ['integer', 'min:10', 'max:300'],
             'base_uri' => ['url'],
         ];
-
-        if (isset($config['certificate'], $config['certificate']['enabled']) && (bool) $config['certificate']['enabled']) {
-            $rules['certificate.disk'] = ['required'];
-        }
 
         if (($validator = Validator::make($config, $rules))->fails()) {
             throw new InvalidClientConfigurationException($validator);
@@ -259,9 +236,7 @@ class Client
      */
     protected function getCertificatePath()
     {
-        return $this->config['certificate']['enabled']
-            ? $this->config['certificate']['path']
-            : null;
+        return null;
     }
 
     /**
@@ -474,13 +449,6 @@ class Client
             'timeout' => $this->config['timeout'],
             'base_uri' => $this->config['base_uri'],
         ];
-
-        /*
-         * Setup certificate if provided
-         * */
-        if ($certificatePath = $this->getCertificatePath()) {
-            $options['cert'] = [$certificatePath];
-        }
 
         /*
          * Inject content body into request
