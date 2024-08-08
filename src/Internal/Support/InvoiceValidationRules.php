@@ -119,7 +119,7 @@ trait InvoiceValidationRules
              * -------------------------------------------------------- */
             'items'                     => ['required', 'array', 'min:1'],
             'items.*.name'              => ['required', 'string'],
-            'items.*.quantity'          => ['required', 'numeric', 'min:1'],
+            'items.*.quantity'          => ['required', 'numeric'], // Szamlazz.hu accepts -1 also
             'items.*.quantityUnit'      => ['required', 'string'],
             'items.*.netUnitPrice'      => ['required', 'numeric'],
             'items.*.taxRate'           => ['required'],
