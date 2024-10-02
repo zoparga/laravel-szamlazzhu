@@ -752,7 +752,7 @@ class Client
                         : ($netUnitPrice * $quantity);
                     $grossPrice = isset($item['grossPrice'])
                         ? $item['grossPrice']
-                        : $netPrice * (1 + ($taxRate / 100));
+                        : round($netPrice * (1 + ($taxRate / 100)), 2);
                     $taxValue = isset($item['taxValue'])
                         ? $item['taxValue']
                         : ($grossPrice - $netPrice);
@@ -1248,7 +1248,7 @@ class Client
                     $taxRate = is_numeric($item['taxRate']) ? $item['taxRate'] : 0;
                     $quantity = $item['quantity'];
                     $netPrice = isset($item['netPrice']) ? $item['netPrice'] : ($netUnitPrice * $quantity);
-                    $grossPrice = isset($item['grossPrice']) ? $item['grossPrice'] : $netPrice * (1 + ($taxRate / 100));
+                    $grossPrice = isset($item['grossPrice']) ? $item['grossPrice'] : round($netPrice * (1 + ($taxRate / 100)), 2);
                     $taxValue = isset($item['taxValue']) ? $item['taxValue'] : ($grossPrice - $netPrice);
 
                     $writer->writeElement('netto', $this->commonCurrencyFormat($netPrice));
