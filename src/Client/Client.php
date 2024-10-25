@@ -37,6 +37,7 @@ use zoparga\SzamlazzHu\Client\Errors\ReceiptValidationException;
 use zoparga\SzamlazzHu\Client\Models\InvoiceCancellationResponse;
 use zoparga\SzamlazzHu\Client\Models\InvoiceCreationResponse;
 use zoparga\SzamlazzHu\Client\Models\ProformaInvoiceDeletionResponse;
+use zoparga\SzamlazzHu\Client\Models\QueryTaxPayerResponse;
 use zoparga\SzamlazzHu\Client\Models\ReceiptCancellationResponse;
 use zoparga\SzamlazzHu\Client\Models\ReceiptCreationResponse;
 use zoparga\SzamlazzHu\Contracts\ArrayableMerchant;
@@ -149,6 +150,16 @@ class Client
                 'xmlnyugtaget',
                 'http://www.szamlazz.hu/xmlnyugtaget',
                 'http://www.szamlazz.hu/xmlnyugtaget http://www.szamlazz.hu/docs/xsds/nyugtaget/xmlnyugtaget.xsd',
+            ],
+        ],
+
+        // Querying tax payer validity
+        'QUERY_TAX_PAYER' => [
+            'name' => 'action-szamla_agent_taxpayer',
+            'schema' => [
+                'xmltaxpayer',
+                'http://www.szamlazz.hu/xmltaxpayer',
+                'http://www.szamlazz.hu/xmltaxpayer http://www.szamlazz.hu/docs/xsds/agent/xmltaxpayer.xsd',
             ],
         ],
     ];
@@ -1503,5 +1514,21 @@ class Client
         }
 
         return new Receipt($head, $items, $payments);
+    }
+
+    /**
+     * @param string $taxNumber
+     * @return QueryTaxPayerResponse
+     */
+    public function queryTaxPayer(string $taxNumber)
+    {
+        $contents = $this->writer(
+            function (XMLWriter $writer) use ($taxNumber) {
+                $this->writeCredentials($writer);
+                $writer->writeElement('torzsszam', substr($taxNumber, 0, 8));
+            },
+            ...self::ACTIONS['QUERY_TAX_PAYER']['schema']
+        );
+        return new QueryTaxPayerResponse($this, $this->send(self::ACTIONS['QUERY_TAX_PAYER']['name'], $contents));
     }
 }
