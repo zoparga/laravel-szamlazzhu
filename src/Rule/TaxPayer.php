@@ -13,8 +13,6 @@ class TaxPayer implements Rule
      */
     protected $data = [];
 
-    protected $message = 'The :attribute is invalid.';
-
     /**
      * @param string $attribute
      * @param mixed $value
@@ -22,9 +20,8 @@ class TaxPayer implements Rule
      */
     public function passes($attribute, $value)
     {
-        $client = App::make('szamlazzhu.client');
+        $client = App::make('szamlazz-hu.client');
         $response = $client->queryTaxPayer((string) $value);
-        $this->message = $response->errorMessage ?? 'The :attribute is invalid.';
         return $response->taxpayerValidity;
     }
 
@@ -33,6 +30,6 @@ class TaxPayer implements Rule
      */
     public function message()
     {
-        return $this->message;
+        return trans('laravel-szamlazzhu::validation.message');
     }
 }

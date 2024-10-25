@@ -52,6 +52,7 @@ class SzamlazzHuServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__ . '/../../config/config.php' => config_path('szamlazz-hu.php'),
         ], 'config');
+        $this->loadTranslationsFrom(__DIR__ . '/../../lang', 'laravel-szamlazzhu');
     }
 
     /**
