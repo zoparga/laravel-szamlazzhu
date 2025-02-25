@@ -15,8 +15,8 @@ use zoparga\SzamlazzHu\Tests\Client\Fixtures\ReceiptRetrievalResponse;
 
 class ReceiptTest extends TestCase {
 
-    /** @test */
-    public function it_can_create_receipt()
+
+    public function test_it_can_create_receipt()
     {
         $receiptDisk = 'disk';
         $receiptPath = 'receipts';
@@ -42,8 +42,8 @@ class ReceiptTest extends TestCase {
         Storage::disk($receiptDisk)->assertExists("$receiptPath/NYGT-2017-123.pdf");
     }
 
-    /** @test */
-    public function it_can_create_receipt_without_pdf()
+
+    public function test_it_can_create_receipt_without_pdf()
     {
         $receiptDisk = 'disk';
         $receiptPath = 'receipts';
@@ -69,15 +69,15 @@ class ReceiptTest extends TestCase {
         Storage::disk($receiptDisk)->assertMissing("$receiptPath/NYGT-2017-123.pdf");
     }
 
-    /** @test */
-    public function it_does_not_accept_empty_receipts()
+
+    public function test_it_does_not_accept_empty_receipts()
     {
         $this->expectException(ReceiptValidationException::class);
         $this->client()->uploadReceipt(new Receipt());
     }
 
-    /** @test */
-    public function it_requires_exchange_rate_and_bank_for_currencies_differs_from_hungarian()
+
+    public function test_it_requires_exchange_rate_and_bank_for_currencies_differs_from_hungarian()
     {
         $client = $this->client([], [], $this->merchant());
 
@@ -103,8 +103,8 @@ class ReceiptTest extends TestCase {
         }
     }
 
-    /** @test */
-    public function it_can_update_pdf_file_when_retrieved()
+
+    public function test_it_can_update_pdf_file_when_retrieved()
     {
         $receiptDisk = 'disk';
         $receiptPath = 'receipts';
@@ -127,8 +127,8 @@ class ReceiptTest extends TestCase {
         Storage::disk($receiptDisk)->assertExists("$receiptPath/$receiptNumber.pdf");
     }
 
-    /** @test */
-    public function it_can_update_without_pdf()
+
+    public function test_it_can_update_without_pdf()
     {
         $receiptDisk = 'disk';
         $receiptPath = 'receipts';
@@ -149,8 +149,8 @@ class ReceiptTest extends TestCase {
         Storage::disk($receiptDisk)->assertMissing("$receiptPath/$receiptNumber.pdf");
     }
 
-    /** @test */
-    public function it_can_cancel_receipt()
+
+    public function test_it_can_cancel_receipt()
     {
         $pdfContent = 123;
         $receiptDisk = 'disk';
@@ -179,8 +179,8 @@ class ReceiptTest extends TestCase {
         Storage::disk($receiptDisk)->assertExists("$receiptPath/$response->originalReceiptNumber.pdf");
     }
 
-    /** @test */
-    public function it_can_cancel_receipt_without_pdf()
+
+    public function test_it_can_cancel_receipt_without_pdf()
     {
         $pdfContent = 123;
         $receiptDisk = 'disk';

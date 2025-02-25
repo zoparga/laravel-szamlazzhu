@@ -55,44 +55,44 @@ class PaymentHolderTest extends TestCase {
         })->toArray();
     }
 
-    /** @test */
-    public function it_can_simplify_payment()
+
+    public function test_it_can_simplify_payment()
     {
         $this->holder->addPayment($this->payment());
         $this->assertSame($this->paymentArray(), $this->holder->payments()->first());
     }
 
-    /** @test */
-    public function it_can_accept_associative_payment()
+
+    public function test_it_can_accept_associative_payment()
     {
         $payment = $this->paymentArray();
         $this->holder->addPayment($payment);
         $this->assertSame($payment, $this->holder->payments()->first());
     }
 
-    /** @test */
-    public function it_can_add_multiple_payments()
+
+    public function test_it_can_add_multiple_payments()
     {
         $this->holder->addPayments($this->payments(5));
         $this->assertEquals(5, $this->holder->payments()->count());
     }
 
-    /** @test */
-    public function it_can_add_items_via_collection()
+
+    public function test_it_can_add_items_via_collection()
     {
         $this->holder->addPayments(new PaymentCollection($this->payments(5)));
         $this->assertEquals(5, $this->holder->payments()->count());
     }
 
-    /** @test */
-    public function it_can_tell_if_it_is_empty()
+
+    public function test_it_can_tell_if_it_is_empty()
     {
         $this->assertTrue($this->holder->isEmpty());
         $this->assertFalse($this->holder->hasPayment());
     }
 
-    /** @test */
-    public function it_can_provide_numeric_array_representation()
+
+    public function test_it_can_provide_numeric_array_representation()
     {
 
         $payments = $this->payments();
@@ -108,8 +108,8 @@ class PaymentHolderTest extends TestCase {
         );
     }
 
-    /** @test */
-    public function it_has_total_count_shortcut()
+
+    public function test_it_has_total_count_shortcut()
     {
         $this->holder->addPayments($this->payments(10));
         $this->assertEquals(10, $this->holder->payments()->count());

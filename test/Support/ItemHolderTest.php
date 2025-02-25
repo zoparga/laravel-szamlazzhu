@@ -56,50 +56,50 @@ class ItemHolderTest extends TestCase {
         })->toArray();
     }
 
-    /** @test */
-    public function it_can_tell_it_has_no_items()
+
+    public function test_it_can_tell_it_has_no_items()
     {
         $this->assertFalse($this->holder->hasItem());
     }
 
-    /** @test */
-    public function it_can_add_contract_item()
+
+    public function test_it_can_add_contract_item()
     {
         $this->holder->addItem($this->item());
         $this->assertEquals(1, $this->holder->items()->count() );
     }
 
-    /** @test */
-    public function it_can_add_array_item()
+
+    public function test_it_can_add_array_item()
     {
         $this->holder->addItem($this->itemArray());
         $this->assertEquals(1,$this->holder->items()->count());
         $this->assertSame($this->holder->items()->first(), $this->itemArray());
     }
 
-    /** @test */
-    public function it_can_add_multiple_items()
+
+    public function test_it_can_add_multiple_items()
     {
         $this->holder->addItems($this->items(5));
         $this->assertEquals(5, $this->holder->items()->count());
     }
 
-    /** @test */
-    public function it_can_add_item_contract_collection()
+
+    public function test_it_can_add_item_contract_collection()
     {
         $this->holder->addItems(new ItemCollection($this->items(5)));
         $this->assertEquals(5, $this->holder->items()->count());
     }
 
-    /** @test */
-    public function it_can_add_numeric_item_collection()
+
+    public function test_it_can_add_numeric_item_collection()
     {
         $this->holder->addItems($this->items(5));
         $this->assertEquals(5, $this->holder->items()->count());
     }
 
-    /** @test */
-    public function it_can_remove_item_when_id_is_provided()
+
+    public function test_it_can_remove_item_when_id_is_provided()
     {
         $item = $this->item();
         $item->id = 1;
@@ -110,16 +110,16 @@ class ItemHolderTest extends TestCase {
         $this->assertEquals(0, $this->holder->items()->count());
     }
 
-    /** @test */
-    public function it_has_total_count_shortcut()
+
+    public function test_it_has_total_count_shortcut()
     {
         $this->holder->addItems($this->items(10));
         $this->assertEquals(10, $this->holder->items()->count());
         $this->assertEquals(10, $this->holder->total());
     }
 
-    /** @test */
-    public function it_can_provide_numeric_array_representation()
+
+    public function test_it_can_provide_numeric_array_representation()
     {
 
         $items = $this->items();
@@ -135,8 +135,8 @@ class ItemHolderTest extends TestCase {
         );
     }
 
-    /** @test */
-    public function it_can_determine_it_does_not_have_item()
+
+    public function test_it_can_determine_it_does_not_have_item()
     {
         $this->assertFalse($this->holder->hasItem());
         $this->assertTrue($this->holder->isEmpty());

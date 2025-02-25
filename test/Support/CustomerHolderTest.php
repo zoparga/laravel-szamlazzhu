@@ -22,8 +22,8 @@ class CustomerHolderTest extends TestCase {
         $this->holder = new CustomerHolder();
     }
 
-    /** @test */
-    public function it_can_determine_it_has_customer()
+
+    public function test_it_can_determine_it_has_customer()
     {
         $customer = new Customer(
             'Jane Doe',
@@ -38,8 +38,8 @@ class CustomerHolderTest extends TestCase {
         $this->assertIsArray($this->holder->getCustomer());
     }
 
-    /** @test */
-    public function it_can_simplify_customer_by_contract()
+
+    public function test_it_can_simplify_customer_by_contract()
     {
         $customer = new Customer(
             'Jane Doe',
@@ -61,8 +61,8 @@ class CustomerHolderTest extends TestCase {
         ], $this->holder->getCustomer());
     }
 
-    /** @test */
-    public function it_can_simplify_customer_by_array()
+
+    public function test_it_can_simplify_customer_by_array()
     {
 
         $customer = [

@@ -32,16 +32,16 @@ class MerchantHolderTest extends TestCase {
         );
     }
 
-    /** @test */
-    public function it_can_determine_it_has_merchant()
+
+    public function test_it_can_determine_it_has_merchant()
     {
         $this->assertFalse($this->holder->hasMerchant());
         $this->holder->setMerchant($this->merchant());
         $this->assertTrue($this->holder->hasMerchant());
     }
 
-    /** @test */
-    public function it_can_accept_associative_merchant()
+
+    public function test_it_can_accept_associative_merchant()
     {
         $merchant = [
             'bank' => 'bank',
@@ -53,8 +53,8 @@ class MerchantHolderTest extends TestCase {
         $this->assertSame($merchant, $this->holder->getMerchant());
     }
 
-    /** @test */
-    public function it_can_simplify_merchant()
+
+    public function test_it_can_simplify_merchant()
     {
         $this->holder->setMerchant($this->merchant());
         $this->assertSame([

@@ -27,16 +27,6 @@ return [
         ],
 
         /*
-         * You can enable the certificate based communication.
-         * You do not need to provide password if you'll use szamlazz.hu's own certificate
-         * */
-        'certificate' => [
-            'enabled' => false,
-            'disk' => 'local',
-            'path' => 'szamlazzhu/cacert.pem' // Relative to disk root
-        ],
-
-        /*
          * HTTP request timeout (in seconds)
          */
         'timeout' => 30,

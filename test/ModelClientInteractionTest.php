@@ -50,8 +50,8 @@ class ModelClientInteractionTest extends \Orchestra\Testbench\TestCase {
         return (new Receipt())->setClient($this->client);
     }
 
-    /** @test */
-    public function invoice_save_passes_the_right_default_arguments_to_client()
+
+    public function test_invoice_save_passes_the_right_default_arguments_to_client()
     {
         $invoice = $this->createInvoice();
 
@@ -63,8 +63,8 @@ class ModelClientInteractionTest extends \Orchestra\Testbench\TestCase {
         $invoice->save();
     }
 
-    /** @test */
-    public function invoice_save_passes_the_right_arguments_to_client()
+
+    public function test_invoice_save_passes_the_right_arguments_to_client()
     {
         $invoice = $this->createInvoice();
 
@@ -77,8 +77,8 @@ class ModelClientInteractionTest extends \Orchestra\Testbench\TestCase {
 
     }
 
-    /** @test */
-    public function invoice_cancel_passes_the_right_default_arguments_to_client()
+
+    public function test_invoice_cancel_passes_the_right_default_arguments_to_client()
     {
         $invoice = $this->createInvoice();
 
@@ -93,8 +93,8 @@ class ModelClientInteractionTest extends \Orchestra\Testbench\TestCase {
         $invoice->cancel();
     }
 
-    /** @test */
-    public function invoice_cancel_passes_the_right_arguments_to_client()
+
+    public function test_invoice_cancel_passes_the_right_arguments_to_client()
     {
         $invoice = $this->createInvoice();
 
@@ -110,8 +110,8 @@ class ModelClientInteractionTest extends \Orchestra\Testbench\TestCase {
     }
 
 
-    /** @test */
-    public function proforma_invoice_save_passes_the_right_default_arguments_to_client()
+
+    public function test_proforma_invoice_save_passes_the_right_default_arguments_to_client()
     {
         $proformaInvoice = $this->createProformaInvoice();
 
@@ -123,8 +123,8 @@ class ModelClientInteractionTest extends \Orchestra\Testbench\TestCase {
         $proformaInvoice->save();
     }
 
-    /** @test */
-    public function proforma_invoice_save_passes_the_right_arguments_to_client()
+
+    public function test_proforma_invoice_save_passes_the_right_arguments_to_client()
     {
         $proformaInvoice = $this->createProformaInvoice();
 
@@ -136,8 +136,8 @@ class ModelClientInteractionTest extends \Orchestra\Testbench\TestCase {
         $proformaInvoice->save(true, 'Subject', 'Message', $response);
     }
 
-    /** @test */
-    public function proforma_invoice_delete_passes_the_right_arguments_to_client()
+
+    public function test_proforma_invoice_delete_passes_the_right_arguments_to_client()
     {
         $proformaInvoice = $this->createProformaInvoice();
 
@@ -149,8 +149,8 @@ class ModelClientInteractionTest extends \Orchestra\Testbench\TestCase {
         $proformaInvoice->delete();
     }
 
-    /** @test */
-    public function invoice_update_interacts_with_client_well()
+
+    public function test_invoice_update_interacts_with_client_well()
     {
         $invoice = $this->createInvoice();
 
@@ -162,8 +162,8 @@ class ModelClientInteractionTest extends \Orchestra\Testbench\TestCase {
         $invoice->update();
     }
 
-    /** @test */
-    public function proforma_invoice_update_interacts_with_client_well()
+
+    public function test_proforma_invoice_update_interacts_with_client_well()
     {
         $proformaInvoice = $this->createProformaInvoice();
 
@@ -175,8 +175,8 @@ class ModelClientInteractionTest extends \Orchestra\Testbench\TestCase {
         $proformaInvoice->update();
     }
 
-    /** @test */
-    public function receipt_update_interacts_with_client_well()
+
+    public function test_receipt_update_interacts_with_client_well()
     {
         $receipt = $this->createReceipt();
 
@@ -188,8 +188,8 @@ class ModelClientInteractionTest extends \Orchestra\Testbench\TestCase {
         $receipt->update();
     }
 
-    /** @test */
-    public function receipt_update_interacts_with_client_with_the_right_arguments()
+
+    public function test_receipt_update_interacts_with_client_with_the_right_arguments()
     {
         $receipt = $this->createReceipt();
 
@@ -201,8 +201,8 @@ class ModelClientInteractionTest extends \Orchestra\Testbench\TestCase {
         $receipt->update(true);
     }
 
-    /** @test */
-    public function receipt_save_passes_the_right_default_arguments_to_client()
+
+    public function test_receipt_save_passes_the_right_default_arguments_to_client()
     {
         $receipt = $this->createReceipt();
 
@@ -214,8 +214,8 @@ class ModelClientInteractionTest extends \Orchestra\Testbench\TestCase {
         $receipt->save();
     }
 
-    /** @test */
-    public function receipt_save_passes_the_right_arguments_to_client()
+
+    public function test_receipt_save_passes_the_right_arguments_to_client()
     {
         $receipt = $this->createReceipt();
 
@@ -227,8 +227,8 @@ class ModelClientInteractionTest extends \Orchestra\Testbench\TestCase {
         $receipt->save(true, $response);
     }
 
-    /** @test */
-    public function receipt_cancel_passes_the_right_default_arguments_to_client()
+
+    public function test_receipt_cancel_passes_the_right_default_arguments_to_client()
     {
         $receipt = $this->createReceipt();
 
@@ -248,8 +248,8 @@ class ModelClientInteractionTest extends \Orchestra\Testbench\TestCase {
         $receipt->cancel();
     }
 
-    /** @test */
-    public function receipt_cancel_passes_the_right_arguments_to_client()
+
+    public function test_receipt_cancel_passes_the_right_arguments_to_client()
     {
         $receipt = $this->createReceipt();
 

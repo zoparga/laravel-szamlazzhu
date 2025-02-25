@@ -107,6 +107,7 @@ trait InvoiceValidationRules
             'customerEmail'             => ['email'],
             'customerReceivesEmail'     => ['boolean'],
             'customerTaxNumber'         => ['string', 'alpha_dash', 'nullable'],
+            'customerTaxNumberEU'       => ['string', 'alpha_dash', 'nullable'],
             'customerShippingName'      => ['string', 'max:255'],
             'customerShippingCountry'   => ['string', 'max:255'],
             'customerShippingZipCode'   => ['string', 'max:255'],
@@ -118,7 +119,7 @@ trait InvoiceValidationRules
              * -------------------------------------------------------- */
             'items'                     => ['required', 'array', 'min:1'],
             'items.*.name'              => ['required', 'string'],
-            'items.*.quantity'          => ['required', 'numeric', 'min:1'],
+            'items.*.quantity'          => ['required', 'numeric'], // Szamlazz.hu accepts -1 also
             'items.*.quantityUnit'      => ['required', 'string'],
             'items.*.netUnitPrice'      => ['required', 'numeric'],
             'items.*.taxRate'           => ['required'],
