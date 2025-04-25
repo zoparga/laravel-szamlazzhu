@@ -41,7 +41,7 @@ Package can automatically save generated PDF files and store on the given disk. 
 
 ## Requirements
 
-Supports Laravel: **5.5** / **6.\*** / **7.\*** / **8.\*** / **9.\*** / **10.\*** / **11.\***
+Supports Laravel: **5.5** / **6.\*** / **7.\*** / **8.\*** / **9.\*** / **10.\*** / **11.\*** / **12.\***
 
 ## Documentations
 
