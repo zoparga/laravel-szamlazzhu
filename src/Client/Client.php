@@ -718,6 +718,9 @@ class Client
                     $writer->writeElement('email', $invoice->customerEmail);
                 }
                 $writer->writeElement('sendEmail', $this->stringifyBoolean($invoice->customerReceivesEmail));
+                if ($invoice->customerTaxSubject) {
+                    $this->writeCdataElement($writer, 'adoalany', $invoice->customerTaxSubject);
+                }
                 if ($invoice->customerTaxNumber) {
                     $this->writeCdataElement($writer, 'adoszam', $invoice->customerTaxNumber);
                 }
