@@ -441,12 +441,41 @@ class InvoiceTest extends TestCase {
     }
 
 
+    public function test_it_can_save_invoice_without_order_number_for_free_plan_users()
+    {
+        $invoiceNumber = 'XXX-2018-56';
+        $client = $this->client(new InvoiceCreationResponse(true, $invoiceNumber, 100, 120, 'https://www.google.com', '123'));
+        $invoice = $this->getInvoice($invoiceNumber, $client);
+        $invoice->orderNumber = null;
+        $invoice->setClient($client);
+
+        /**  @var \zoparga\SzamlazzHu\Client\Models\InvoiceCreationResponse $response */
+        $invoice->save(false, null, null, $response);
+        $this->assertInstanceOf(\zoparga\SzamlazzHu\Client\Models\InvoiceCreationResponse::class, $response);
+    }
+
+
     public function test_proforma_invoice_save_offers_response_reference_capture()
     {
         $invoiceNumber = 'D-2018-55';
         $client = $this->client(new InvoiceCreationResponse(true, $invoiceNumber, 100, 120, 'https://www.google.com', '123'));
         $invoice = $this->getProformaInvoice($invoiceNumber, $client);
         $invoice->orderNumber = 1;
+        $invoice->setClient($client);
+
+        /**  @var \zoparga\SzamlazzHu\Client\Models\InvoiceCreationResponse $response */
+        $result = $invoice->save(false, null, null, $response);
+        $this->assertEquals($invoice, $result);
+        $this->assertInstanceOf(\zoparga\SzamlazzHu\Client\Models\InvoiceCreationResponse::class, $response);
+    }
+
+
+    public function test_it_can_save_proforma_invoice_without_order_number_for_free_plan_users()
+    {
+        $invoiceNumber = 'D-2018-56';
+        $client = $this->client(new InvoiceCreationResponse(true, $invoiceNumber, 100, 120, 'https://www.google.com', '123'));
+        $invoice = $this->getProformaInvoice($invoiceNumber, $client);
+        $invoice->orderNumber = null;
         $invoice->setClient($client);
 
         /**  @var \zoparga\SzamlazzHu\Client\Models\InvoiceCreationResponse $response */

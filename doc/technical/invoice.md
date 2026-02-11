@@ -30,8 +30,6 @@ $invoice = new Invoice(); // Or: new ProformaInvoice();
  * Required attributes
  */
 
-// Alpha numeric
-$invoice->orderNumber = 123;
 // Boolean
 $invoice->isElectronic = true;
 // Supported: de, en, it, hu, fr, ro, sk, hr
@@ -57,6 +55,8 @@ $invoice->isFinalInvoice = false;
 /*
  * Optional attributes
  */
+// Order number - not available on Számlázz.hu free plan
+$invoice->orderNumber = 123;
 $invoice->invoicePrefix = 'PRFX';
 $invoice->comment = 'Wow! This is an invoice!';
 ```

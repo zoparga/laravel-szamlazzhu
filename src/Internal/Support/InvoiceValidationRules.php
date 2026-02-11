@@ -69,7 +69,8 @@ trait InvoiceValidationRules
             // This is usually the locally stored incremental identifier of order.
             // It is important to be specified because the common invoice can be
             // obtained from proforma invoice only if it is specified.
-            'orderNumber'     => ['required', 'alpha_dash'],
+            // Optional: Számlázz.hu free plan users cannot provide or modify this value.
+            'orderNumber'     => ['nullable', 'alpha_dash'],
 
             'isImprestInvoice'          => ['required', 'boolean'],
             'isFinalInvoice'            => ['required', 'boolean'],
