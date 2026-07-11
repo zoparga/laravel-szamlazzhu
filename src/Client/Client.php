@@ -15,6 +15,7 @@ use RuntimeException;
 use SebastianBergmann\CodeCoverage\ParserException;
 use XMLWriter;
 use zoparga\SzamlazzHu\Client\ApiErrors\AuthenticationException;
+use zoparga\SzamlazzHu\Client\ApiErrors\BrowserSessionConflictException;
 use zoparga\SzamlazzHu\Client\ApiErrors\CannotCreateInvoiceException;
 use zoparga\SzamlazzHu\Client\ApiErrors\CommonResponseException;
 use zoparga\SzamlazzHu\Client\ApiErrors\InvalidGrossPriceValueException;
@@ -23,10 +24,12 @@ use zoparga\SzamlazzHu\Client\ApiErrors\InvalidNetPriceValueException;
 use zoparga\SzamlazzHu\Client\ApiErrors\InvalidVatRateValueException;
 use zoparga\SzamlazzHu\Client\ApiErrors\InvoiceNotificationSendingException;
 use zoparga\SzamlazzHu\Client\ApiErrors\KeystoreOpeningException;
+use zoparga\SzamlazzHu\Client\ApiErrors\MultipleAccountAccessException;
 use zoparga\SzamlazzHu\Client\ApiErrors\NoXmlFileException;
 use zoparga\SzamlazzHu\Client\ApiErrors\ReceiptAlreadyExistsException;
 use zoparga\SzamlazzHu\Client\ApiErrors\ReceiptNotFoundException;
 use zoparga\SzamlazzHu\Client\ApiErrors\RemoteMaintenanceException;
+use zoparga\SzamlazzHu\Client\ApiErrors\SubscriptionNotActiveException;
 use zoparga\SzamlazzHu\Client\ApiErrors\UnsuccessfulInvoiceSignatureException;
 use zoparga\SzamlazzHu\Client\ApiErrors\XmlReadingException;
 use zoparga\SzamlazzHu\Client\Errors\InvalidClientConfigurationException;
@@ -420,6 +423,15 @@ class Client
                 break;
             case 57:
                 $exceptionClass = XmlReadingException::class;
+                break;
+            case 135:
+                $exceptionClass = BrowserSessionConflictException::class;
+                break;
+            case 136:
+                $exceptionClass = SubscriptionNotActiveException::class;
+                break;
+            case 164:
+                $exceptionClass = MultipleAccountAccessException::class;
                 break;
             default:
                 throw new CommonResponseException($response, $message ?: 'Unknown error', $httpStatusCode ?: 500);

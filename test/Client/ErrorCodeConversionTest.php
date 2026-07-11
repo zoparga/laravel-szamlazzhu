@@ -6,6 +6,7 @@ namespace zoparga\SzamlazzHu\Tests\Client;
 
 use GuzzleHttp\Psr7\Response;
 use zoparga\SzamlazzHu\Client\ApiErrors\AuthenticationException;
+use zoparga\SzamlazzHu\Client\ApiErrors\BrowserSessionConflictException;
 use zoparga\SzamlazzHu\Client\ApiErrors\CannotCreateInvoiceException;
 use zoparga\SzamlazzHu\Client\ApiErrors\CommonResponseException;
 use zoparga\SzamlazzHu\Client\ApiErrors\InvalidGrossPriceValueException;
@@ -14,8 +15,10 @@ use zoparga\SzamlazzHu\Client\ApiErrors\InvalidNetPriceValueException;
 use zoparga\SzamlazzHu\Client\ApiErrors\InvalidVatRateValueException;
 use zoparga\SzamlazzHu\Client\ApiErrors\InvoiceNotificationSendingException;
 use zoparga\SzamlazzHu\Client\ApiErrors\KeystoreOpeningException;
+use zoparga\SzamlazzHu\Client\ApiErrors\MultipleAccountAccessException;
 use zoparga\SzamlazzHu\Client\ApiErrors\NoXmlFileException;
 use zoparga\SzamlazzHu\Client\ApiErrors\RemoteMaintenanceException;
+use zoparga\SzamlazzHu\Client\ApiErrors\SubscriptionNotActiveException;
 use zoparga\SzamlazzHu\Client\ApiErrors\UnsuccessfulInvoiceSignatureException;
 use zoparga\SzamlazzHu\Client\ApiErrors\XmlReadingException;
 use zoparga\SzamlazzHu\Internal\Support\PaymentMethods;
@@ -162,6 +165,27 @@ class ErrorCodeConversionTest extends TestCase {
     {
         $this->expectException(InvalidGrossPriceValueException::class);
         $this->invokeReceiptGetter(261);
+    }
+
+
+    public function test_it_can_detect_browser_session_conflict()
+    {
+        $this->expectException(BrowserSessionConflictException::class);
+        $this->invokeReceiptGetter(135);
+    }
+
+
+    public function test_it_can_detect_inactive_subscription()
+    {
+        $this->expectException(SubscriptionNotActiveException::class);
+        $this->invokeReceiptGetter(136);
+    }
+
+
+    public function test_it_can_detect_multiple_account_access()
+    {
+        $this->expectException(MultipleAccountAccessException::class);
+        $this->invokeReceiptGetter(164);
     }
 
 
