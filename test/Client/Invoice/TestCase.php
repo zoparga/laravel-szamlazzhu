@@ -14,7 +14,7 @@ class TestCase extends \zoparga\SzamlazzHu\Tests\Client\TestCase {
      * @param Client|null $client
      * @return Invoice
      */
-    protected function getEmptyInvoice($number = null, Client $client = null)
+    protected function getEmptyInvoice($number = null, ?Client $client = null)
     {
         $invoice = new Invoice();
 

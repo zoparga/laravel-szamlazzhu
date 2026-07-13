@@ -48,7 +48,7 @@ class InvoiceTest extends TestCase {
      * @param null $items
      * @return Invoice
      */
-    protected function getInvoice($number = null, Client $client = null, $items = null)
+    protected function getInvoice($number = null, ?Client $client = null, $items = null)
     {
         $invoice = $this->getEmptyInvoice($number, $client);
 
@@ -80,7 +80,7 @@ class InvoiceTest extends TestCase {
      * @param null $items
      * @return ProformaInvoice
      */
-    protected function getProformaInvoice($number = null, Client $client = null, $items = null)
+    protected function getProformaInvoice($number = null, ?Client $client = null, $items = null)
     {
         $proformaInvoice = new ProformaInvoice($this->getEmptyInvoice($number));
 

@@ -17,7 +17,7 @@ class TestCase extends \zoparga\SzamlazzHu\Tests\Client\TestCase {
      * @param null $payments
      * @return Receipt
      */
-    protected function getReceipt($orderNumber = 1, Client $client = null, $items = null, $payments = null)
+    protected function getReceipt($orderNumber = 1, ?Client $client = null, $items = null, $payments = null)
     {
         $receipt = new Receipt([
             'orderNumber' => $orderNumber,
