@@ -43,6 +43,8 @@ Package can automatically save generated PDF files and store on the given disk. 
 
 Supports Laravel: **5.5** / **6.\*** / **7.\*** / **8.\*** / **9.\*** / **10.\*** / **11.\*** / **12.\*** / **13.\***
 
+Supports Guzzle: **6.\*** / **7.\*** / **8.\***
+
 ## Documentations
 
 For usage please refer to the [technical documentation](doc/technical/documentation.md).

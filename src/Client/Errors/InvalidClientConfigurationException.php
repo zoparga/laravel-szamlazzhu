@@ -22,7 +22,7 @@ class InvalidClientConfigurationException extends Exception
      */
     protected $validator;
 
-    public function __construct(Validator $validator, string $message = "", int $code = 0, Throwable $previous = null)
+    public function __construct(Validator $validator, string $message = "", int $code = 0, ?Throwable $previous = null)
     {
         parent::__construct($message, $code, $previous);
         $this->validator = $validator;

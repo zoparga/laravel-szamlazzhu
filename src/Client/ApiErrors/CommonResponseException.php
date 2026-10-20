@@ -26,7 +26,7 @@ class CommonResponseException extends ClientException
      * @param int $code
      * @param Throwable|null $previous
      */
-    public function __construct(ResponseInterface $response, $message = "", $code = 0, Throwable $previous = null)
+    public function __construct(ResponseInterface $response, $message = "", $code = 0, ?Throwable $previous = null)
     {
         $this->info = $message;
         parent::__construct($response, $message, $code, $previous);

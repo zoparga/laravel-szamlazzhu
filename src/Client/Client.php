@@ -4,7 +4,6 @@ namespace zoparga\SzamlazzHu\Client;
 
 use Carbon\Carbon;
 use Closure;
-use GuzzleHttp\Psr7\Response;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
@@ -487,7 +486,7 @@ class Client
         }
 
         return $this->client->requestAsync($method, $uri, $options)
-            ->then(function (Response $response) {
+            ->then(function (ResponseInterface $response) {
                 return $this->processResponse($response);
             }, function () {
             })

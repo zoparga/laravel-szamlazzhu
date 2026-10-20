@@ -30,7 +30,7 @@ abstract class ModelValidationException extends Exception
      * @param int $code
      * @param Throwable|null $previous
      */
-    public function __construct(AbstractModel $model, Validator $validator, string $message = "", int $code = 0, Throwable $previous = null)
+    public function __construct(AbstractModel $model, Validator $validator, string $message = "", int $code = 0, ?Throwable $previous = null)
     {
         $this->model = $model;
         $this->validator = $validator;

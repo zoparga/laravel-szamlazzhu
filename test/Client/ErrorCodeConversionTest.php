@@ -71,7 +71,7 @@ class ErrorCodeConversionTest extends TestCase {
      */
     protected function createErrorResponse($code)
     {
-        return new Response(200, ['szlahu_error_code' => $code]);
+        return new Response(200, ['szlahu_error_code' => (string) $code]);
     }
 
     /**
